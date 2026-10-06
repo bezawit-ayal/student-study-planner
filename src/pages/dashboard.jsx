@@ -133,7 +133,6 @@ function Dashboard() {
         }
     }
 
-    const progressStats = getProgressStats()
     function getFocusDuration(value) {
         const minutes = Number(value)
 
@@ -141,11 +140,21 @@ function Dashboard() {
             return 25
         }
 
-        return minutes
+        return Math.min(
+            Math.max(Math.floor(minutes), 1),
+            180
+        )
     }
 
-    function startFocusTimer() {
-        const duration = getFocusDuration(focusDuration)
+    function changeFocusDuration(value) {
+        if (value === "") {
+            setFocusDuration("")
+            setTimeLeft(0)
+            setTimerRunning(false)
+            return
+        }
+
+        const duration = getFocusDuration(value)
 
         setFocusDuration(String(duration))
         setTimeLeft(duration * 60)
@@ -155,13 +164,21 @@ function Dashboard() {
         }
     }
 
+    function stepFocusDuration(amount) {
+        const current = Number(focusDuration) || 25
+        const next = Math.min(Math.max(current + amount, 1), 180)
+        changeFocusDuration(String(next))
+    }
+
     function startFocusTimer() {
         if (!focusSubjectId || !focusTask.trim()) {
             return
         }
 
-        if (timeLeft <= 0) {
-            const duration = getFocusDuration(focusDuration)
+        const duration = getFocusDuration(focusDuration)
+
+        if (timeLeft <= 0 || !focusDuration) {
+            setFocusDuration(String(duration))
             setTimeLeft(duration * 60)
         }
 
@@ -404,7 +421,8 @@ function Dashboard() {
                             day: sessionDay,
                             time: sessionTime,
                             duration: Number(sessionDuration),
-                            focus: sessionFocus.trim()
+                            focus: sessionFocus.trim(),
+                            completed: false
                         }
                     ]
                 }
@@ -416,6 +434,26 @@ function Dashboard() {
         setSessionDuration("60")
         setSessionFocus("")
         setShowSessionForm(false)
+    }
+
+    function toggleStudySession(sessionId) {
+        setSubjects((current) =>
+            current.map((subject) => {
+                if (subject.id !== selectedSubjectId) {
+                    return subject
+                }
+
+                return {
+                    ...subject,
+                    studySessions: subject.studySessions.map(
+                        (session) =>
+                            session.id === sessionId
+                                ? { ...session, completed: !session.completed }
+                                : session
+                    )
+                }
+            })
+        )
     }
 
     function deleteStudySession(sessionId) {
@@ -570,6 +608,7 @@ function Dashboard() {
 
     const weekDays = getWeekDays()
     const calendarEvents = getCalendarEvents()
+    const progressStats = getProgressStats()
 
     return (
         <main className="dashboard-page">
@@ -960,6 +999,16 @@ function Dashboard() {
 
                                 <div className="custom-duration">
 
+                                    <button
+                                        type="button"
+                                        className="duration-step"
+                                        onClick={() => stepFocusDuration(-1)}
+                                        disabled={timerRunning}
+                                        aria-label="Decrease duration"
+                                    >
+                                        −
+                                    </button>
+
                                     <input
                                         id="custom-duration"
                                         type="number"
@@ -973,6 +1022,16 @@ function Dashboard() {
                                         }
                                         disabled={timerRunning}
                                     />
+
+                                    <button
+                                        type="button"
+                                        className="duration-step"
+                                        onClick={() => stepFocusDuration(1)}
+                                        disabled={timerRunning}
+                                        aria-label="Increase duration"
+                                    >
+                                        +
+                                    </button>
 
                                     <span>minutes</span>
 
@@ -1533,7 +1592,7 @@ function Dashboard() {
                     </section>
 
                 ) : (
-                    <section className="subject-workspace">
+                    < section className="subject-workspace">
 
                         <button
                             className="workspace-back"
@@ -2349,7 +2408,7 @@ function Dashboard() {
                                             (session) => (
 
                                                 <div
-                                                    className="session-row"
+                                                    className={`session-row ${session.completed ? "completed" : ""}`}
                                                     key={session.id}
                                                 >
 
@@ -2367,6 +2426,15 @@ function Dashboard() {
 
                                                     </div>
 
+
+                                                    <button
+                                                        className="assignment-check session-check"
+                                                        type="button"
+                                                        onClick={() => toggleStudySession(session.id)}
+                                                        aria-label={session.completed ? "Mark study session as incomplete" : "Mark study session as complete"}
+                                                    >
+                                                        {session.completed && <Check size={14} />}
+                                                    </button>
 
                                                     <div className="session-details">
 
