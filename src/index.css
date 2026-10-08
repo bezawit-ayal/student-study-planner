@@ -712,6 +712,17 @@ input {
   }
 }
 
+.auth-error {
+  margin: 0;
+  padding: 10px 12px;
+  background: var(--primary-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--primary-color);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .password-label {
   display: flex;
   align-items: center;
@@ -968,6 +979,35 @@ input {
 /* =========================
    STUDY PLAN
 ========================= */
+.dashboard-notification {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.dashboard-notification .notifications-wrapper {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  z-index: 1000;
+}
+
+@media (max-width: 768px) {
+  .dashboard-notification .notifications-wrapper {
+    position: fixed;
+    top: 68px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    z-index: 9999;
+  }
+
+  .notification-dropdown {
+    width: 100%;
+    max-width: none;
+    max-height: calc(100vh - 84px);
+    overflow-y: auto;
+  }
+}
 
 .dashboard-page {
   min-height: 100vh;
@@ -983,6 +1023,230 @@ input {
   padding: 0 6vw;
   border-bottom: 1px solid #dcd9d0;
 }
+
+.dashboard-nav {
+  position: relative;
+  z-index: 50;
+}
+
+.dashboard-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-nav-right .notifications-wrapper {
+  margin: 0;
+}
+
+.dashboard-menu {
+  position: relative;
+}
+
+.dashboard-menu-button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  box-shadow:
+    0 2px 0 var(--border-color),
+    0 4px 8px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.dashboard-menu-button:hover {
+  background: var(--primary-light);
+  border-color: var(--border-hover);
+  color: var(--primary-color);
+}
+
+.dashboard-menu-button.active {
+  background: var(--primary-light);
+  border-color: var(--border-hover);
+  color: var(--primary-color);
+}
+
+.dashboard-menu-button:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 1px 0 var(--border-color),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.dashboard-menu-dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 180px;
+  padding: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 11px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-menu-dropdown button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 10px 11px;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.dashboard-menu-dropdown button:hover {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+}
+
+.dashboard-menu-dropdown button.active {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  .dashboard-nav-right {
+    gap: 7px;
+  }
+
+  .dashboard-menu-button {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* =========================================
+   PROFILE PAGE INSIDE DASHBOARD
+========================================= */
+
+.dashboard-profile-view {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-profile-view .profile-page {
+  width: min(620px, 100%);
+  max-width: 620px;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 4px 10px 18px;
+}
+
+/* Compact profile header */
+
+.dashboard-profile-view .profile-header {
+  margin-bottom: 8px;
+  padding: 8px 10px;
+}
+
+.dashboard-profile-view .profile-header-content {
+  gap: 9px;
+}
+
+.dashboard-profile-view .profile-avatar,
+.dashboard-profile-view .profile-photo-wrapper {
+  width: 40px;
+  height: 40px;
+}
+
+.dashboard-profile-view .profile-header-info h1 {
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.dashboard-profile-view .profile-header-info p {
+  margin-top: 3px;
+  font-size: 11px;
+}
+
+/* Compact cards */
+
+.dashboard-profile-view .profile-content {
+  gap: 7px;
+}
+
+.dashboard-profile-view .profile-card {
+  padding: 10px;
+}
+
+.dashboard-profile-view .profile-card-header {
+  margin-bottom: 8px;
+}
+
+.dashboard-profile-view .profile-card-header h2 {
+  font-size: 14px;
+}
+
+.dashboard-profile-view .profile-card-header p {
+  margin-top: 2px;
+  font-size: 10px;
+}
+
+.dashboard-profile-view .profile-information {
+  gap: 8px;
+}
+
+.dashboard-profile-view .profile-field {
+  gap: 4px;
+}
+
+.dashboard-profile-view .profile-field label {
+  font-size: 10px;
+}
+
+.dashboard-profile-view .profile-value,
+.dashboard-profile-view .profile-input-wrapper {
+  min-height: 34px;
+  padding: 7px 9px;
+  font-size: 11px;
+}
+
+/* Compact statistics */
+
+.dashboard-profile-view .profile-stat-grid {
+  gap: 7px;
+}
+
+.dashboard-profile-view .profile-stat {
+  padding: 8px;
+  gap: 8px;
+}
+
+.dashboard-profile-view .profile-stat strong {
+  font-size: 16px;
+}
+
+.dashboard-profile-view .profile-stat span {
+  font-size: 9px;
+}
+
+/* Keep dashboard navigation unchanged */
 
 .dashboard-nav-right {
   display: flex;
@@ -3290,5 +3554,37 @@ input {
 
   .focus-history-row {
     align-items: flex-start;
+  }
+}
+
+.dashboard-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  min-width: 0;
+}
+
+.dashboard-notification {
+  position: relative;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+
+  .notification-dropdown {
+    position: fixed;
+    top: 68px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100vh - 84px);
+    overflow-y: auto;
+    z-index: 9999;
+  }
+
+  .dashboard-nav-right {
+    gap: 5px;
   }
 }

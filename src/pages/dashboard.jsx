@@ -1,14 +1,19 @@
 import {
     ArrowLeft,
+    Bell,
     BookOpen,
     CalendarDays,
     Check,
     Clock3,
+    MoreHorizontal,
     Plus,
     Trash2
 } from "lucide-react"
 
 import { useEffect, useState } from "react"
+
+import Notifications from "../components/dashboard/notifications"
+import Profile from "../components/dashboard/profile"
 
 function Dashboard() {
     const [subjects, setSubjects] = useState([])
@@ -17,6 +22,8 @@ function Dashboard() {
 
     const [activeView, setActiveView] = useState("plan")
 
+    const [showMenu, setShowMenu] = useState(false)
+    const [showNotifications, setShowNotifications] = useState(false)
     const [showSubjectForm, setShowSubjectForm] = useState(false)
     const [subjectName, setSubjectName] = useState("")
 
@@ -37,12 +44,15 @@ function Dashboard() {
     const [sessionTime, setSessionTime] = useState("")
     const [sessionDuration, setSessionDuration] = useState("60")
     const [sessionFocus, setSessionFocus] = useState("")
+
     const [focusSubjectId, setFocusSubjectId] = useState("")
     const [focusTask, setFocusTask] = useState("")
     const [focusDuration, setFocusDuration] = useState("25")
     const [timeLeft, setTimeLeft] = useState(25 * 60)
     const [timerRunning, setTimerRunning] = useState(false)
     const [focusHistory, setFocusHistory] = useState([])
+
+    const [showProfile, setShowProfile] = useState(false)
 
     function formatTimer(seconds) {
         const minutes = Math.floor(seconds / 60)
@@ -52,6 +62,7 @@ function Dashboard() {
             remainingSeconds
         ).padStart(2, "0")}`
     }
+
     function getProgressStats() {
         const totalAssignments = subjects.reduce(
             (total, subject) =>
@@ -79,7 +90,8 @@ function Dashboard() {
                 total +
                 subject.studySessions.reduce(
                     (sessionTotal, session) =>
-                        sessionTotal + Number(session.duration || 0),
+                        sessionTotal +
+                        Number(session.duration || 0),
                     0
                 ),
             0
@@ -104,6 +116,7 @@ function Dashboard() {
 
         const subjectProgress = subjects.map((subject) => {
             const total = subject.assignments.length
+
             const completed = subject.assignments.filter(
                 (assignment) => assignment.completed
             ).length
@@ -166,7 +179,12 @@ function Dashboard() {
 
     function stepFocusDuration(amount) {
         const current = Number(focusDuration) || 25
-        const next = Math.min(Math.max(current + amount, 1), 180)
+
+        const next = Math.min(
+            Math.max(current + amount, 1),
+            180
+        )
+
         changeFocusDuration(String(next))
     }
 
@@ -195,7 +213,8 @@ function Dashboard() {
 
     function completeFocusSession() {
         const subject = subjects.find(
-            (item) => item.id === Number(focusSubjectId)
+            (item) =>
+                item.id === Number(focusSubjectId)
         )
 
         if (!subject) {
@@ -216,7 +235,6 @@ function Dashboard() {
         setTimerRunning(false)
         setTimeLeft(0)
     }
-
 
     useEffect(() => {
         if (!timerRunning) {
@@ -315,7 +333,8 @@ function Dashboard() {
                             assignment.id === assignmentId
                                 ? {
                                     ...assignment,
-                                    completed: !assignment.completed
+                                    completed:
+                                        !assignment.completed
                                 }
                                 : assignment
                     )
@@ -333,10 +352,11 @@ function Dashboard() {
 
                 return {
                     ...subject,
-                    assignments: subject.assignments.filter(
-                        (assignment) =>
-                            assignment.id !== assignmentId
-                    )
+                    assignments:
+                        subject.assignments.filter(
+                            (assignment) =>
+                                assignment.id !== assignmentId
+                        )
                 }
             })
         )
@@ -445,12 +465,17 @@ function Dashboard() {
 
                 return {
                     ...subject,
-                    studySessions: subject.studySessions.map(
-                        (session) =>
-                            session.id === sessionId
-                                ? { ...session, completed: !session.completed }
-                                : session
-                    )
+                    studySessions:
+                        subject.studySessions.map(
+                            (session) =>
+                                session.id === sessionId
+                                    ? {
+                                        ...session,
+                                        completed:
+                                            !session.completed
+                                    }
+                                    : session
+                        )
                 }
             })
         )
@@ -465,10 +490,11 @@ function Dashboard() {
 
                 return {
                     ...subject,
-                    studySessions: subject.studySessions.filter(
-                        (session) =>
-                            session.id !== sessionId
-                    )
+                    studySessions:
+                        subject.studySessions.filter(
+                            (session) =>
+                                session.id !== sessionId
+                        )
                 }
             })
         )
@@ -476,14 +502,18 @@ function Dashboard() {
 
     function openSubject(subjectId) {
         setSelectedSubjectId(subjectId)
+        setActiveView("plan")
         setActiveWorkspaceTab("assignments")
+
         setShowAssignmentForm(false)
         setShowExamForm(false)
         setShowSessionForm(false)
+        setShowProfile(false)
     }
 
     function closeSubject() {
         setSelectedSubjectId(null)
+
         setShowAssignmentForm(false)
         setShowExamForm(false)
         setShowSessionForm(false)
@@ -499,12 +529,11 @@ function Dashboard() {
             return ""
         }
 
-        return day.charAt(0).toUpperCase() + day.slice(1)
+        return (
+            day.charAt(0).toUpperCase() +
+            day.slice(1)
+        )
     }
-
-    /*
-     * CALENDAR
-     */
 
     function getWeekDays() {
         const today = new Date()
@@ -532,19 +561,23 @@ function Dashboard() {
 
                 return {
                     date,
-                    key: date.toISOString().split("T")[0],
-                    dayName: date.toLocaleDateString(
-                        undefined,
-                        {
-                            weekday: "short"
-                        }
-                    ),
-                    fullDayName: date.toLocaleDateString(
-                        undefined,
-                        {
-                            weekday: "long"
-                        }
-                    ),
+                    key: date
+                        .toISOString()
+                        .split("T")[0],
+                    dayName:
+                        date.toLocaleDateString(
+                            undefined,
+                            {
+                                weekday: "short"
+                            }
+                        ),
+                    fullDayName:
+                        date.toLocaleDateString(
+                            undefined,
+                            {
+                                weekday: "long"
+                            }
+                        ),
                     dayNumber: date.getDate()
                 }
             }
@@ -555,17 +588,20 @@ function Dashboard() {
         const events = []
 
         subjects.forEach((subject) => {
-            subject.assignments.forEach((assignment) => {
-                events.push({
-                    id: `assignment-${assignment.id}`,
-                    type: "assignment",
-                    title: assignment.title,
-                    subject: subject.name,
-                    date: assignment.dueDate,
-                    time: null,
-                    completed: assignment.completed
-                })
-            })
+            subject.assignments.forEach(
+                (assignment) => {
+                    events.push({
+                        id: `assignment-${assignment.id}`,
+                        type: "assignment",
+                        title: assignment.title,
+                        subject: subject.name,
+                        date: assignment.dueDate,
+                        time: null,
+                        completed:
+                            assignment.completed
+                    })
+                }
+            )
 
             subject.exams.forEach((exam) => {
                 events.push({
@@ -586,21 +622,23 @@ function Dashboard() {
         const sessions = []
 
         subjects.forEach((subject) => {
-            subject.studySessions.forEach((session) => {
-                if (
-                    session.day.toLowerCase() ===
-                    dayName.toLowerCase()
-                ) {
-                    sessions.push({
-                        id: `session-${session.id}`,
-                        type: "session",
-                        title: session.focus,
-                        subject: subject.name,
-                        time: session.time,
-                        duration: session.duration
-                    })
+            subject.studySessions.forEach(
+                (session) => {
+                    if (
+                        session.day.toLowerCase() ===
+                        dayName.toLowerCase()
+                    ) {
+                        sessions.push({
+                            id: `session-${session.id}`,
+                            type: "session",
+                            title: session.focus,
+                            subject: subject.name,
+                            time: session.time,
+                            duration: session.duration
+                        })
+                    }
                 }
-            })
+            )
         })
 
         return sessions
@@ -636,59 +674,193 @@ function Dashboard() {
 
                 <div className="dashboard-nav-right">
 
-                    <button
-                        type="button"
-                        className={`dashboard-nav-link ${activeView === "calendar"
-                            ? "active"
-                            : ""
-                            }`}
-                        onClick={() => {
-                            setActiveView("calendar")
-                            setSelectedSubjectId(null)
-                        }}
-                    >
-                        Calendar
-                    </button>
-                    <button
-                        type="button"
-                        className={`dashboard-nav-link ${activeView === "focus" ? "active" : ""
-                            }`}
-                        onClick={() => {
-                            setActiveView("focus")
-                            setSelectedSubjectId(null)
-                        }}
-                    >
-                        Focus timer
-                    </button>
+                    {/* NOTIFICATION BELL */}
 
-                    <button
-                        type="button"
-                        className={`dashboard-nav-link ${activeView === "progress" ? "active" : ""
-                            }`}
-                        onClick={() => {
-                            setActiveView("progress")
-                            setSelectedSubjectId(null)
-                        }}
-                    >
-                        Progress
-                    </button>
+                    <div className="dashboard-notification">
 
-                    <button
-                        type="button"
-                        className={`dashboard-nav-link ${activeView === "plan"
-                            ? "active"
-                            : ""
-                            }`}
-                        onClick={() => {
-                            setActiveView("plan")
-                        }}
-                    >
-                        Study plan
-                    </button>
+                        <button
+                            type="button"
+                            className={`notification-bell-button ${showNotifications
+                                ? "active"
+                                : ""
+                                }`}
+                            onClick={() => {
+                                setShowNotifications(
+                                    (current) => !current
+                                )
+                                setShowMenu(false)
+                            }}
+                            aria-label="Open notifications"
+                            aria-expanded={
+                                showNotifications
+                            }
+                        >
+                            <Bell
+                                size={20}
+                                strokeWidth={1.8}
+                            />
+                        </button>
+
+                        <Notifications
+                            subjects={subjects}
+                            isOpen={showNotifications}
+                            onClose={() =>
+                                setShowNotifications(false)
+                            }
+                            onOpenSubject={(subjectId) => {
+                                setSelectedSubjectId(
+                                    subjectId
+                                )
+                                setActiveView("plan")
+                                setActiveWorkspaceTab(
+                                    "assignments"
+                                )
+                                setShowNotifications(false)
+                                setShowProfile(false)
+                            }}
+                        />
+
+                    </div>
+
+                    {/* THREE DOT MENU */}
+
+                    <div className="dashboard-menu">
+
+                        <button
+                            type="button"
+                            className={`dashboard-menu-button ${showMenu
+                                ? "active"
+                                : ""
+                                }`}
+                            onClick={() => {
+                                setShowMenu(
+                                    (current) =>
+                                        !current
+                                )
+                                setShowNotifications(false)
+                            }}
+                            aria-label="Open navigation menu"
+                            aria-expanded={showMenu}
+                        >
+                            <MoreHorizontal size={21} />
+                        </button>
+
+                        {showMenu && (
+                            <div className="dashboard-menu-dropdown">
+
+                                <button
+                                    type="button"
+                                    className={
+                                        activeView ===
+                                            "calendar"
+                                            ? "active"
+                                            : ""
+                                    }
+                                    onClick={() => {
+                                        setActiveView(
+                                            "calendar"
+                                        )
+                                        setSelectedSubjectId(
+                                            null
+                                        )
+                                        setShowProfile(
+                                            false
+                                        )
+                                        setShowMenu(false)
+                                    }}
+                                >
+                                    Calendar
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={
+                                        activeView ===
+                                            "focus"
+                                            ? "active"
+                                            : ""
+                                    }
+                                    onClick={() => {
+                                        setActiveView(
+                                            "focus"
+                                        )
+                                        setSelectedSubjectId(
+                                            null
+                                        )
+                                        setShowProfile(
+                                            false
+                                        )
+                                        setShowMenu(false)
+                                    }}
+                                >
+                                    Focus timer
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={
+                                        activeView ===
+                                            "progress"
+                                            ? "active"
+                                            : ""
+                                    }
+                                    onClick={() => {
+                                        setActiveView(
+                                            "progress"
+                                        )
+                                        setSelectedSubjectId(
+                                            null
+                                        )
+                                        setShowProfile(
+                                            false
+                                        )
+                                        setShowMenu(false)
+                                    }}
+                                >
+                                    Progress
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={
+                                        activeView ===
+                                            "plan"
+                                            ? "active"
+                                            : ""
+                                    }
+                                    onClick={() => {
+                                        setActiveView(
+                                            "plan"
+                                        )
+                                        setSelectedSubjectId(
+                                            null
+                                        )
+                                        setShowProfile(
+                                            false
+                                        )
+                                        setShowMenu(false)
+                                    }}
+                                >
+                                    Study plan
+                                </button>
+
+                            </div>
+                        )}
+
+                    </div>
+
+                    {/* PROFILE */}
 
                     <button
                         className="profile-button"
                         type="button"
+                        onClick={() => {
+                            setShowProfile(true)
+                            setSelectedSubjectId(null)
+                            setShowNotifications(false)
+                            setShowMenu(false)
+                        }}
+                        aria-label="Open profile"
                     >
                         B
                     </button>
@@ -699,10 +871,23 @@ function Dashboard() {
 
 
             {/* =========================
-                CALENDAR VIEW
+                PROFILE
             ========================= */}
 
-            {activeView === "calendar" ? (
+            {showProfile ? (
+
+                <Profile
+                    subjects={subjects}
+                    onBack={() =>
+                        setShowProfile(false)
+                    }
+                />
+
+            ) : activeView === "calendar" ? (
+
+                /* =========================
+                    CALENDAR VIEW
+                ========================= */
 
                 <section className="calendar-page">
 
@@ -728,7 +913,6 @@ function Dashboard() {
 
                     </div>
 
-
                     <div className="calendar-week">
 
                         {weekDays.map((day) => {
@@ -736,7 +920,8 @@ function Dashboard() {
                             const dayEvents =
                                 calendarEvents.filter(
                                     (event) =>
-                                        event.date === day.key
+                                        event.date ===
+                                        day.key
                                 )
 
                             const daySessions =
@@ -766,21 +951,22 @@ function Dashboard() {
 
                                     </div>
 
-
                                     <div className="calendar-events">
 
                                         {dayEvents.map(
                                             (event) => (
                                                 <div
-                                                    className={`calendar-event ${event.type} ${event.completed
-                                                        ? "completed"
-                                                        : ""
+                                                    className={`calendar-event ${event.type
+                                                        } ${event.completed
+                                                            ? "completed"
+                                                            : ""
                                                         }`}
                                                     key={event.id}
                                                 >
 
                                                     <span className="calendar-event-type">
-                                                        {event.type === "exam"
+                                                        {event.type ===
+                                                            "exam"
                                                             ? "EXAM"
                                                             : "ASSIGNMENT"}
                                                     </span>
@@ -795,7 +981,9 @@ function Dashboard() {
 
                                                     {event.time && (
                                                         <small>
-                                                            {event.time}
+                                                            {
+                                                                event.time
+                                                            }
                                                         </small>
                                                     )}
 
@@ -809,7 +997,6 @@ function Dashboard() {
                                             )
                                         )}
 
-
                                         {daySessions.map(
                                             (session) => (
                                                 <div
@@ -822,24 +1009,31 @@ function Dashboard() {
                                                     </span>
 
                                                     <strong>
-                                                        {session.title}
+                                                        {
+                                                            session.title
+                                                        }
                                                     </strong>
 
                                                     <span>
-                                                        {session.subject}
+                                                        {
+                                                            session.subject
+                                                        }
                                                     </span>
 
                                                     <small>
-                                                        {session.time}
+                                                        {
+                                                            session.time
+                                                        }
                                                         {" · "}
-                                                        {session.duration}
+                                                        {
+                                                            session.duration
+                                                        }
                                                         {" min"}
                                                     </small>
 
                                                 </div>
                                             )
                                         )}
-
 
                                         {!hasEvents && (
                                             <div className="calendar-no-events">
@@ -858,6 +1052,11 @@ function Dashboard() {
                 </section>
 
             ) : activeView === "focus" ? (
+
+                /* =========================
+                    FOCUS TIMER
+                ========================= */
+
                 <section className="focus-page">
 
                     <div className="focus-header">
@@ -873,8 +1072,9 @@ function Dashboard() {
                         </h1>
 
                         <p>
-                            Choose what you want to work on and set
-                            the amount of time that feels right for you.
+                            Choose what you want to work on
+                            and set the amount of time that
+                            feels right for you.
                         </p>
 
                     </div>
@@ -893,7 +1093,9 @@ function Dashboard() {
                                     id="focus-subject"
                                     value={focusSubjectId}
                                     onChange={(event) => {
-                                        setFocusSubjectId(event.target.value)
+                                        setFocusSubjectId(
+                                            event.target.value
+                                        )
                                         setFocusTask("")
                                     }}
                                     disabled={timerRunning}
@@ -902,14 +1104,22 @@ function Dashboard() {
                                         Choose a subject
                                     </option>
 
-                                    {subjects.map((subject) => (
-                                        <option
-                                            key={subject.id}
-                                            value={subject.id}
-                                        >
-                                            {subject.name}
-                                        </option>
-                                    ))}
+                                    {subjects.map(
+                                        (subject) => (
+                                            <option
+                                                key={
+                                                    subject.id
+                                                }
+                                                value={
+                                                    subject.id
+                                                }
+                                            >
+                                                {
+                                                    subject.name
+                                                }
+                                            </option>
+                                        )
+                                    )}
 
                                 </select>
 
@@ -926,7 +1136,9 @@ function Dashboard() {
                                     type="text"
                                     value={focusTask}
                                     onChange={(event) =>
-                                        setFocusTask(event.target.value)
+                                        setFocusTask(
+                                            event.target.value
+                                        )
                                     }
                                     placeholder="e.g. React components"
                                     disabled={timerRunning}
@@ -945,14 +1157,19 @@ function Dashboard() {
                                     <button
                                         type="button"
                                         className={
-                                            focusDuration === "25"
+                                            focusDuration ===
+                                                "25"
                                                 ? "selected"
                                                 : ""
                                         }
                                         onClick={() =>
-                                            changeFocusDuration("25")
+                                            changeFocusDuration(
+                                                "25"
+                                            )
                                         }
-                                        disabled={timerRunning}
+                                        disabled={
+                                            timerRunning
+                                        }
                                     >
                                         25 min
                                     </button>
@@ -960,14 +1177,19 @@ function Dashboard() {
                                     <button
                                         type="button"
                                         className={
-                                            focusDuration === "45"
+                                            focusDuration ===
+                                                "45"
                                                 ? "selected"
                                                 : ""
                                         }
                                         onClick={() =>
-                                            changeFocusDuration("45")
+                                            changeFocusDuration(
+                                                "45"
+                                            )
                                         }
-                                        disabled={timerRunning}
+                                        disabled={
+                                            timerRunning
+                                        }
                                     >
                                         45 min
                                     </button>
@@ -975,14 +1197,19 @@ function Dashboard() {
                                     <button
                                         type="button"
                                         className={
-                                            focusDuration === "60"
+                                            focusDuration ===
+                                                "60"
                                                 ? "selected"
                                                 : ""
                                         }
                                         onClick={() =>
-                                            changeFocusDuration("60")
+                                            changeFocusDuration(
+                                                "60"
+                                            )
                                         }
-                                        disabled={timerRunning}
+                                        disabled={
+                                            timerRunning
+                                        }
                                     >
                                         60 min
                                     </button>
@@ -1002,8 +1229,14 @@ function Dashboard() {
                                     <button
                                         type="button"
                                         className="duration-step"
-                                        onClick={() => stepFocusDuration(-1)}
-                                        disabled={timerRunning}
+                                        onClick={() =>
+                                            stepFocusDuration(
+                                                -1
+                                            )
+                                        }
+                                        disabled={
+                                            timerRunning
+                                        }
                                         aria-label="Decrease duration"
                                     >
                                         −
@@ -1014,31 +1247,45 @@ function Dashboard() {
                                         type="number"
                                         min="1"
                                         max="180"
-                                        value={focusDuration}
+                                        value={
+                                            focusDuration
+                                        }
                                         onChange={(event) =>
                                             changeFocusDuration(
-                                                event.target.value
+                                                event.target
+                                                    .value
                                             )
                                         }
-                                        disabled={timerRunning}
+                                        disabled={
+                                            timerRunning
+                                        }
                                     />
 
                                     <button
                                         type="button"
                                         className="duration-step"
-                                        onClick={() => stepFocusDuration(1)}
-                                        disabled={timerRunning}
+                                        onClick={() =>
+                                            stepFocusDuration(
+                                                1
+                                            )
+                                        }
+                                        disabled={
+                                            timerRunning
+                                        }
                                         aria-label="Increase duration"
                                     >
                                         +
                                     </button>
 
-                                    <span>minutes</span>
+                                    <span>
+                                        minutes
+                                    </span>
 
                                 </div>
 
                                 <small>
-                                    Choose any duration from 1 to 180 minutes.
+                                    Choose any duration from
+                                    1 to 180 minutes.
                                 </small>
 
                             </div>
@@ -1060,68 +1307,75 @@ function Dashboard() {
                             </div>
 
                             <div className="timer-task">
-
                                 {focusTask.trim()
                                     ? focusTask
                                     : "Choose something to work on"}
-
                             </div>
 
                             <div className="timer-subject">
-
                                 {focusSubjectId
                                     ? subjects.find(
                                         (subject) =>
-                                            subject.id === Number(
+                                            subject.id ===
+                                            Number(
                                                 focusSubjectId
                                             )
                                     )?.name
                                     : "No subject selected"}
-
                             </div>
 
                             <div className="timer-actions">
 
-                                {!timerRunning && timeLeft !== 0 && (
-                                    <button
-                                        type="button"
-                                        className="timer-primary"
-                                        onClick={startFocusTimer}
-                                        disabled={
-                                            !focusSubjectId ||
-                                            !focusTask.trim()
-                                        }
-                                    >
-                                        Start studying
-                                    </button>
-                                )}
+                                {!timerRunning &&
+                                    timeLeft !== 0 && (
+                                        <button
+                                            type="button"
+                                            className="timer-primary"
+                                            onClick={
+                                                startFocusTimer
+                                            }
+                                            disabled={
+                                                !focusSubjectId ||
+                                                !focusTask.trim()
+                                            }
+                                        >
+                                            Start studying
+                                        </button>
+                                    )}
 
                                 {timerRunning && (
                                     <button
                                         type="button"
                                         className="timer-primary"
                                         onClick={() =>
-                                            setTimerRunning(false)
+                                            setTimerRunning(
+                                                false
+                                            )
                                         }
                                     >
                                         Pause
                                     </button>
                                 )}
 
-                                {!timerRunning && timeLeft === 0 && (
-                                    <button
-                                        type="button"
-                                        className="timer-primary"
-                                        onClick={resetFocusTimer}
-                                    >
-                                        Start again
-                                    </button>
-                                )}
+                                {!timerRunning &&
+                                    timeLeft === 0 && (
+                                        <button
+                                            type="button"
+                                            className="timer-primary"
+                                            onClick={
+                                                resetFocusTimer
+                                            }
+                                        >
+                                            Start again
+                                        </button>
+                                    )}
 
                                 <button
                                     type="button"
                                     className="timer-reset"
-                                    onClick={resetFocusTimer}
+                                    onClick={
+                                        resetFocusTimer
+                                    }
                                 >
                                     Reset
                                 </button>
@@ -1138,6 +1392,7 @@ function Dashboard() {
                             <div className="focus-history-header">
 
                                 <div>
+
                                     <p className="plan-label">
                                         COMPLETED
                                     </p>
@@ -1145,6 +1400,7 @@ function Dashboard() {
                                     <h2>
                                         Recent focus sessions
                                     </h2>
+
                                 </div>
 
                             </div>
@@ -1155,28 +1411,41 @@ function Dashboard() {
                                     .slice()
                                     .reverse()
                                     .slice(0, 5)
-                                    .map((session) => (
-                                        <div
-                                            className="focus-history-row"
-                                            key={session.id}
-                                        >
+                                    .map(
+                                        (session) => (
+                                            <div
+                                                className="focus-history-row"
+                                                key={
+                                                    session.id
+                                                }
+                                            >
 
-                                            <div>
+                                                <div>
+
+                                                    <strong>
+                                                        {
+                                                            session.focus
+                                                        }
+                                                    </strong>
+
+                                                    <span>
+                                                        {
+                                                            session.subject
+                                                        }
+                                                    </span>
+
+                                                </div>
+
                                                 <strong>
-                                                    {session.focus}
+                                                    {
+                                                        session.duration
+                                                    }{" "}
+                                                    min
                                                 </strong>
 
-                                                <span>
-                                                    {session.subject}
-                                                </span>
                                             </div>
-
-                                            <strong>
-                                                {session.duration} min
-                                            </strong>
-
-                                        </div>
-                                    ))}
+                                        )
+                                    )}
 
                             </div>
 
@@ -1184,10 +1453,17 @@ function Dashboard() {
                     )}
 
                 </section>
+
             ) : activeView === "progress" ? (
+
+                /* =========================
+                    PROGRESS
+                ========================= */
+
                 <section className="progress-page">
 
                     <div className="progress-header">
+
                         <p className="plan-label">
                             YOUR PROGRESS
                         </p>
@@ -1200,57 +1476,98 @@ function Dashboard() {
 
                         <p>
                             Your progress is based on the work
-                            you've added and completed in StudyFlow.
+                            you've added and completed in
+                            StudyFlow.
                         </p>
+
                     </div>
 
                     <div className="progress-stats">
 
                         <div className="progress-stat">
-                            <span>ASSIGNMENTS</span>
+
+                            <span>
+                                ASSIGNMENTS
+                            </span>
 
                             <strong>
-                                {progressStats.completedAssignments}
+                                {
+                                    progressStats.completedAssignments
+                                }
+
                                 <small>
-                                    / {progressStats.totalAssignments}
+                                    /{" "}
+                                    {
+                                        progressStats.totalAssignments
+                                    }
                                 </small>
                             </strong>
 
-                            <p>completed</p>
+                            <p>
+                                completed
+                            </p>
+
                         </div>
 
                         <div className="progress-stat">
-                            <span>COMPLETION</span>
+
+                            <span>
+                                COMPLETION
+                            </span>
 
                             <strong>
-                                {progressStats.assignmentProgress}%
-                            </strong>
-
-                            <p>assignment progress</p>
-                        </div>
-
-                        <div className="progress-stat">
-                            <span>PLANNED STUDY</span>
-
-                            <strong>
-                                {progressStats.totalStudyMinutes}
-                                <small> min</small>
-                            </strong>
-
-                            <p>scheduled study time</p>
-                        </div>
-
-                        <div className="progress-stat">
-                            <span>FOCUS SESSIONS</span>
-
-                            <strong>
-                                {progressStats.totalFocusSessions}
+                                {
+                                    progressStats.assignmentProgress
+                                }%
                             </strong>
 
                             <p>
-                                {progressStats.completedFocusMinutes} min
-                                completed
+                                assignment progress
                             </p>
+
+                        </div>
+
+                        <div className="progress-stat">
+
+                            <span>
+                                PLANNED STUDY
+                            </span>
+
+                            <strong>
+                                {
+                                    progressStats.totalStudyMinutes
+                                }
+
+                                <small>
+                                    {" "}min
+                                </small>
+                            </strong>
+
+                            <p>
+                                scheduled study time
+                            </p>
+
+                        </div>
+
+                        <div className="progress-stat">
+
+                            <span>
+                                FOCUS SESSIONS
+                            </span>
+
+                            <strong>
+                                {
+                                    progressStats.totalFocusSessions
+                                }
+                            </strong>
+
+                            <p>
+                                {
+                                    progressStats.completedFocusMinutes
+                                }{" "}
+                                min completed
+                            </p>
+
                         </div>
 
                     </div>
@@ -1258,7 +1575,9 @@ function Dashboard() {
                     <div className="progress-section">
 
                         <div className="progress-section-header">
+
                             <div>
+
                                 <p className="plan-label">
                                     BY SUBJECT
                                 </p>
@@ -1266,20 +1585,26 @@ function Dashboard() {
                                 <h2>
                                     Your subjects.
                                 </h2>
+
                             </div>
+
                         </div>
 
-                        {progressStats.subjectProgress.length === 0 ? (
+                        {progressStats.subjectProgress
+                            .length === 0 ? (
 
                             <div className="progress-empty">
+
                                 <h3>
                                     Your progress starts here.
                                 </h3>
 
                                 <p>
-                                    Add a subject and some assignments
-                                    to start seeing your progress.
+                                    Add a subject and some
+                                    assignments to start seeing
+                                    your progress.
                                 </p>
+
                             </div>
 
                         ) : (
@@ -1290,13 +1615,17 @@ function Dashboard() {
                                     (subject) => (
                                         <div
                                             className="subject-progress-row"
-                                            key={subject.id}
+                                            key={
+                                                subject.id
+                                            }
                                         >
 
                                             <div className="subject-progress-info">
 
                                                 <strong>
-                                                    {subject.name}
+                                                    {
+                                                        subject.name
+                                                    }
                                                 </strong>
 
                                                 <span>
@@ -1306,7 +1635,9 @@ function Dashboard() {
                                                     of{" "}
                                                     {
                                                         subject.totalAssignments
-                                                    } assignments completed
+                                                    }{" "}
+                                                    assignments
+                                                    completed
                                                 </span>
 
                                             </div>
@@ -1323,7 +1654,9 @@ function Dashboard() {
                                             </div>
 
                                             <strong className="subject-progress-percent">
-                                                {subject.progress}%
+                                                {
+                                                    subject.progress
+                                                }%
                                             </strong>
 
                                         </div>
@@ -1345,13 +1678,18 @@ function Dashboard() {
                             </p>
 
                             <strong>
-                                {progressStats.totalExams}
+                                {
+                                    progressStats.totalExams
+                                }
                             </strong>
 
                             <span>
-                                {progressStats.totalExams === 1
-                                    ? "exam in your plan"
-                                    : "exams in your plan"}
+                                {
+                                    progressStats.totalExams ===
+                                        1
+                                        ? "exam in your plan"
+                                        : "exams in your plan"
+                                }
                             </span>
 
                         </div>
@@ -1363,8 +1701,13 @@ function Dashboard() {
                             </p>
 
                             <strong>
-                                {progressStats.completedFocusMinutes}
-                                <small> min</small>
+                                {
+                                    progressStats.completedFocusMinutes
+                                }
+
+                                <small>
+                                    {" "}min
+                                </small>
                             </strong>
 
                             <span>
@@ -1380,7 +1723,7 @@ function Dashboard() {
             ) : (
 
                 /* =========================
-                    STUDY PLAN VIEW
+                    STUDY PLAN
                 ========================= */
 
                 !selectedSubject ? (
@@ -1388,15 +1731,6 @@ function Dashboard() {
                     <section className="plan-page">
 
                         <div className="plan-intro">
-
-                            <div className="plan-icon">
-
-                                <BookOpen
-                                    size={21}
-                                    strokeWidth={1.7}
-                                />
-
-                            </div>
 
                             <p className="plan-label">
                                 MY STUDY PLAN
@@ -1411,11 +1745,11 @@ function Dashboard() {
                             <p className="plan-description">
                                 Add the subjects you're studying.
                                 Each subject gets its own workspace
-                                for assignments, exams, and study sessions.
+                                for assignments, exams, and study
+                                sessions.
                             </p>
 
                         </div>
-
 
                         <div className="plan-section">
 
@@ -1434,19 +1768,21 @@ function Dashboard() {
                                         </h2>
 
                                         <p>
-                                            Choose a subject to open its workspace.
+                                            Choose a subject to open
+                                            its workspace.
                                         </p>
 
                                     </div>
 
                                 </div>
 
-
                                 <button
                                     className="plan-add-button"
                                     type="button"
                                     onClick={() =>
-                                        setShowSubjectForm(true)
+                                        setShowSubjectForm(
+                                            true
+                                        )
                                     }
                                 >
                                     <Plus size={16} />
@@ -1454,7 +1790,6 @@ function Dashboard() {
                                 </button>
 
                             </div>
-
 
                             {showSubjectForm && (
 
@@ -1466,10 +1801,13 @@ function Dashboard() {
                                     <input
                                         type="text"
                                         placeholder="e.g. Web Development"
-                                        value={subjectName}
+                                        value={
+                                            subjectName
+                                        }
                                         onChange={(event) =>
                                             setSubjectName(
-                                                event.target.value
+                                                event.target
+                                                    .value
                                             )
                                         }
                                         autoFocus
@@ -1483,7 +1821,9 @@ function Dashboard() {
                                         type="button"
                                         className="cancel-button"
                                         onClick={() => {
-                                            setShowSubjectForm(false)
+                                            setShowSubjectForm(
+                                                false
+                                            )
                                             setSubjectName("")
                                         }}
                                     >
@@ -1493,7 +1833,6 @@ function Dashboard() {
                                 </form>
 
                             )}
-
 
                             {subjects.length === 0 ? (
 
@@ -1509,13 +1848,16 @@ function Dashboard() {
                                     </h3>
 
                                     <p>
-                                        Add the subjects you are currently studying.
+                                        Add the subjects you are
+                                        currently studying.
                                     </p>
 
                                     <button
                                         type="button"
                                         onClick={() =>
-                                            setShowSubjectForm(true)
+                                            setShowSubjectForm(
+                                                true
+                                            )
                                         }
                                     >
                                         Add your first subject
@@ -1529,11 +1871,16 @@ function Dashboard() {
                                 <div className="subject-list">
 
                                     {subjects.map(
-                                        (subject, index) => (
+                                        (
+                                            subject,
+                                            index
+                                        ) => (
 
                                             <button
                                                 className="subject-row"
-                                                key={subject.id}
+                                                key={
+                                                    subject.id
+                                                }
                                                 type="button"
                                                 onClick={() =>
                                                     openSubject(
@@ -1554,21 +1901,45 @@ function Dashboard() {
                                                 <div className="subject-details">
 
                                                     <strong>
-                                                        {subject.name}
+                                                        {
+                                                            subject.name
+                                                        }
                                                     </strong>
 
                                                     <span>
-                                                        {subject.assignments.length}{" "}
-                                                        {subject.assignments.length === 1
-                                                            ? "assignment"
-                                                            : "assignments"}
+                                                        {
+                                                            subject
+                                                                .assignments
+                                                                .length
+                                                        }{" "}
+                                                        {
+                                                            subject
+                                                                .assignments
+                                                                .length ===
+                                                                1
+                                                                ? "assignment"
+                                                                : "assignments"
+                                                        }
                                                         {" · "}
-                                                        {subject.exams.length}{" "}
-                                                        {subject.exams.length === 1
-                                                            ? "exam"
-                                                            : "exams"}
+                                                        {
+                                                            subject
+                                                                .exams
+                                                                .length
+                                                        }{" "}
+                                                        {
+                                                            subject
+                                                                .exams
+                                                                .length ===
+                                                                1
+                                                                ? "exam"
+                                                                : "exams"
+                                                        }
                                                         {" · "}
-                                                        {subject.studySessions.length}{" "}
+                                                        {
+                                                            subject
+                                                                .studySessions
+                                                                .length
+                                                        }{" "}
                                                         sessions
                                                     </span>
 
@@ -1592,7 +1963,12 @@ function Dashboard() {
                     </section>
 
                 ) : (
-                    < section className="subject-workspace">
+
+                    /* =========================
+                        SUBJECT WORKSPACE
+                    ========================= */
+
+                    <section className="subject-workspace">
 
                         <button
                             className="workspace-back"
@@ -1602,7 +1978,6 @@ function Dashboard() {
                             <ArrowLeft size={16} />
                             Back to subjects
                         </button>
-
 
                         <div className="workspace-header">
 
@@ -1621,11 +1996,11 @@ function Dashboard() {
 
                         </div>
 
-
                         <div className="workspace-navigation">
 
                             <button
-                                className={`workspace-tab ${activeWorkspaceTab === "assignments"
+                                className={`workspace-tab ${activeWorkspaceTab ===
+                                    "assignments"
                                     ? "active"
                                     : ""
                                     }`}
@@ -1635,45 +2010,61 @@ function Dashboard() {
                                         "assignments"
                                     )
 
-                                    setShowAssignmentForm(false)
+                                    setShowAssignmentForm(
+                                        false
+                                    )
                                     setShowExamForm(false)
-                                    setShowSessionForm(false)
+                                    setShowSessionForm(
+                                        false
+                                    )
                                 }}
                             >
                                 Assignments
                             </button>
 
-
                             <button
-                                className={`workspace-tab ${activeWorkspaceTab === "exams"
+                                className={`workspace-tab ${activeWorkspaceTab ===
+                                    "exams"
                                     ? "active"
                                     : ""
                                     }`}
                                 type="button"
                                 onClick={() => {
-                                    setActiveWorkspaceTab("exams")
+                                    setActiveWorkspaceTab(
+                                        "exams"
+                                    )
 
-                                    setShowAssignmentForm(false)
+                                    setShowAssignmentForm(
+                                        false
+                                    )
                                     setShowExamForm(false)
-                                    setShowSessionForm(false)
+                                    setShowSessionForm(
+                                        false
+                                    )
                                 }}
                             >
                                 Exams
                             </button>
 
-
                             <button
-                                className={`workspace-tab ${activeWorkspaceTab === "sessions"
+                                className={`workspace-tab ${activeWorkspaceTab ===
+                                    "sessions"
                                     ? "active"
                                     : ""
                                     }`}
                                 type="button"
                                 onClick={() => {
-                                    setActiveWorkspaceTab("sessions")
+                                    setActiveWorkspaceTab(
+                                        "sessions"
+                                    )
 
-                                    setShowAssignmentForm(false)
+                                    setShowAssignmentForm(
+                                        false
+                                    )
                                     setShowExamForm(false)
-                                    setShowSessionForm(false)
+                                    setShowSessionForm(
+                                        false
+                                    )
                                 }}
                             >
                                 Study sessions
@@ -1681,812 +2072,941 @@ function Dashboard() {
 
                         </div>
 
-
                         {/* =========================
                             ASSIGNMENTS
                         ========================= */}
 
-                        {activeWorkspaceTab === "assignments" && (
+                        {activeWorkspaceTab ===
+                            "assignments" && (
 
-                            <section className="workspace-section">
+                                <section className="workspace-section">
 
-                                <div className="workspace-section-header">
-
-                                    <div>
-
-                                        <span className="plan-number">
-                                            01
-                                        </span>
-
-                                        <h2>
-                                            Assignments
-                                        </h2>
-
-                                        <p>
-                                            Work that belongs to{" "}
-                                            {selectedSubject.name}.
-                                        </p>
-
-                                    </div>
-
-
-                                    <button
-                                        className="plan-add-button"
-                                        type="button"
-                                        onClick={() =>
-                                            setShowAssignmentForm(true)
-                                        }
-                                    >
-                                        <Plus size={16} />
-                                        Add assignment
-                                    </button>
-
-                                </div>
-
-
-                                {showAssignmentForm && (
-
-                                    <form
-                                        className="assignment-form"
-                                        onSubmit={addAssignment}
-                                    >
-
-                                        <div className="assignment-input">
-
-                                            <label htmlFor="assignment-title">
-                                                Assignment
-                                            </label>
-
-                                            <input
-                                                id="assignment-title"
-                                                type="text"
-                                                placeholder="e.g. Finish chapter 4 exercises"
-                                                value={assignmentTitle}
-                                                onChange={(event) =>
-                                                    setAssignmentTitle(
-                                                        event.target.value
-                                                    )
-                                                }
-                                                autoFocus
-                                            />
-
-                                        </div>
-
-
-                                        <div className="assignment-input">
-
-                                            <label htmlFor="assignment-date">
-                                                Due date
-                                            </label>
-
-                                            <input
-                                                id="assignment-date"
-                                                type="date"
-                                                value={assignmentDate}
-                                                onChange={(event) =>
-                                                    setAssignmentDate(
-                                                        event.target.value
-                                                    )
-                                                }
-                                            />
-
-                                        </div>
-
-
-                                        <div className="assignment-actions">
-
-                                            <button type="submit">
-                                                Add assignment
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                className="cancel-button"
-                                                onClick={() => {
-                                                    setShowAssignmentForm(false)
-                                                    setAssignmentTitle("")
-                                                    setAssignmentDate("")
-                                                }}
-                                            >
-                                                Cancel
-                                            </button>
-
-                                        </div>
-
-                                    </form>
-
-                                )}
-
-
-                                {selectedSubject.assignments.length === 0 ? (
-
-                                    <div className="workspace-empty">
-
-                                        <CalendarDays
-                                            size={23}
-                                            strokeWidth={1.5}
-                                        />
+                                    <div className="workspace-section-header">
 
                                         <div>
 
-                                            <h3>
-                                                No assignments yet.
-                                            </h3>
+                                            <span className="plan-number">
+                                                01
+                                            </span>
+
+                                            <h2>
+                                                Assignments
+                                            </h2>
 
                                             <p>
-                                                Add assignments that belong to{" "}
-                                                {selectedSubject.name}.
+                                                Work that belongs to{" "}
+                                                {
+                                                    selectedSubject.name
+                                                }.
                                             </p>
 
                                         </div>
 
+                                        <button
+                                            className="plan-add-button"
+                                            type="button"
+                                            onClick={() =>
+                                                setShowAssignmentForm(
+                                                    true
+                                                )
+                                            }
+                                        >
+                                            <Plus size={16} />
+                                            Add assignment
+                                        </button>
+
                                     </div>
 
-                                ) : (
+                                    {showAssignmentForm && (
 
-                                    <div className="assignment-list">
+                                        <form
+                                            className="assignment-form"
+                                            onSubmit={
+                                                addAssignment
+                                            }
+                                        >
 
-                                        {selectedSubject.assignments.map(
-                                            (assignment) => (
+                                            <div className="assignment-input">
 
-                                                <div
-                                                    className={`assignment-row ${assignment.completed
-                                                        ? "completed"
-                                                        : ""
-                                                        }`}
-                                                    key={assignment.id}
+                                                <label htmlFor="assignment-title">
+                                                    Assignment
+                                                </label>
+
+                                                <input
+                                                    id="assignment-title"
+                                                    type="text"
+                                                    placeholder="e.g. Finish chapter 4 exercises"
+                                                    value={
+                                                        assignmentTitle
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setAssignmentTitle(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
+                                                    autoFocus
+                                                />
+
+                                            </div>
+
+                                            <div className="assignment-input">
+
+                                                <label htmlFor="assignment-date">
+                                                    Due date
+                                                </label>
+
+                                                <input
+                                                    id="assignment-date"
+                                                    type="date"
+                                                    value={
+                                                        assignmentDate
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setAssignmentDate(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="assignment-actions">
+
+                                                <button type="submit">
+                                                    Add assignment
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="cancel-button"
+                                                    onClick={() => {
+                                                        setShowAssignmentForm(
+                                                            false
+                                                        )
+                                                        setAssignmentTitle(
+                                                            ""
+                                                        )
+                                                        setAssignmentDate(
+                                                            ""
+                                                        )
+                                                    }}
                                                 >
+                                                    Cancel
+                                                </button>
 
-                                                    <button
-                                                        className="assignment-check"
-                                                        type="button"
-                                                        onClick={() =>
-                                                            toggleAssignment(
-                                                                assignment.id
-                                                            )
+                                            </div>
+
+                                        </form>
+
+                                    )}
+
+                                    {selectedSubject
+                                        .assignments
+                                        .length === 0 ? (
+
+                                        <div className="workspace-empty">
+
+                                            <CalendarDays
+                                                size={23}
+                                                strokeWidth={1.5}
+                                            />
+
+                                            <div>
+
+                                                <h3>
+                                                    No assignments yet.
+                                                </h3>
+
+                                                <p>
+                                                    Add assignments that
+                                                    belong to{" "}
+                                                    {
+                                                        selectedSubject.name
+                                                    }.
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                    ) : (
+
+                                        <div className="assignment-list">
+
+                                            {selectedSubject.assignments.map(
+                                                (
+                                                    assignment
+                                                ) => (
+
+                                                    <div
+                                                        className={`assignment-row ${assignment.completed
+                                                            ? "completed"
+                                                            : ""
+                                                            }`}
+                                                        key={
+                                                            assignment.id
                                                         }
                                                     >
-                                                        {assignment.completed && (
-                                                            <Check size={14} />
-                                                        )}
-                                                    </button>
 
-
-                                                    <div className="assignment-details">
-
-                                                        <strong>
-                                                            {assignment.title}
-                                                        </strong>
-
-                                                        <span>
-                                                            Due{" "}
-                                                            {new Date(
-                                                                `${assignment.dueDate}T00:00:00`
-                                                            ).toLocaleDateString(
-                                                                undefined,
-                                                                {
-                                                                    month: "short",
-                                                                    day: "numeric",
-                                                                    year: "numeric"
-                                                                }
+                                                        <button
+                                                            className="assignment-check"
+                                                            type="button"
+                                                            onClick={() =>
+                                                                toggleAssignment(
+                                                                    assignment.id
+                                                                )
+                                                            }
+                                                        >
+                                                            {assignment.completed && (
+                                                                <Check
+                                                                    size={
+                                                                        14
+                                                                    }
+                                                                />
                                                             )}
-                                                        </span>
+                                                        </button>
+
+                                                        <div className="assignment-details">
+
+                                                            <strong>
+                                                                {
+                                                                    assignment.title
+                                                                }
+                                                            </strong>
+
+                                                            <span>
+                                                                Due{" "}
+                                                                {new Date(
+                                                                    `${assignment.dueDate}T00:00:00`
+                                                                ).toLocaleDateString(
+                                                                    undefined,
+                                                                    {
+                                                                        month: "short",
+                                                                        day: "numeric",
+                                                                        year: "numeric"
+                                                                    }
+                                                                )}
+                                                            </span>
+
+                                                        </div>
+
+                                                        <button
+                                                            className="delete-assignment"
+                                                            type="button"
+                                                            onClick={() =>
+                                                                deleteAssignment(
+                                                                    assignment.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <Trash2
+                                                                size={
+                                                                    16
+                                                                }
+                                                            />
+                                                        </button>
 
                                                     </div>
 
+                                                )
+                                            )}
 
-                                                    <button
-                                                        className="delete-assignment"
-                                                        type="button"
-                                                        onClick={() =>
-                                                            deleteAssignment(
-                                                                assignment.id
-                                                            )
-                                                        }
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
+                                        </div>
 
-                                                </div>
+                                    )}
 
-                                            )
-                                        )}
+                                </section>
 
-                                    </div>
-
-                                )}
-
-                            </section>
-
-                        )}
-
+                            )}
 
                         {/* =========================
                             EXAMS
                         ========================= */}
 
-                        {activeWorkspaceTab === "exams" && (
+                        {activeWorkspaceTab ===
+                            "exams" && (
 
-                            <section className="workspace-section">
+                                <section className="workspace-section">
 
-                                <div className="workspace-section-header">
-
-                                    <div>
-
-                                        <span className="plan-number">
-                                            02
-                                        </span>
-
-                                        <h2>
-                                            Exams & deadlines
-                                        </h2>
-
-                                        <p>
-                                            Important dates for{" "}
-                                            {selectedSubject.name}.
-                                        </p>
-
-                                    </div>
-
-
-                                    <button
-                                        type="button"
-                                        className="plan-add-button"
-                                        onClick={() =>
-                                            setShowExamForm(
-                                                !showExamForm
-                                            )
-                                        }
-                                    >
-                                        {showExamForm
-                                            ? "Cancel"
-                                            : "Add exam"}
-                                    </button>
-
-                                </div>
-
-
-                                {showExamForm && (
-
-                                    <form
-                                        className="exam-form"
-                                        onSubmit={addExam}
-                                    >
-
-                                        <div className="assignment-input">
-
-                                            <label htmlFor="exam-title">
-                                                Exam
-                                            </label>
-
-                                            <input
-                                                id="exam-title"
-                                                type="text"
-                                                placeholder="e.g. Database Systems final"
-                                                value={examTitle}
-                                                onChange={(event) =>
-                                                    setExamTitle(
-                                                        event.target.value
-                                                    )
-                                                }
-                                                autoFocus
-                                            />
-
-                                        </div>
-
-
-                                        <div className="assignment-input">
-
-                                            <label htmlFor="exam-date">
-                                                Date
-                                            </label>
-
-                                            <input
-                                                id="exam-date"
-                                                type="date"
-                                                value={examDate}
-                                                onChange={(event) =>
-                                                    setExamDate(
-                                                        event.target.value
-                                                    )
-                                                }
-                                            />
-
-                                        </div>
-
-
-                                        <div className="assignment-input">
-
-                                            <label htmlFor="exam-time">
-                                                Time
-                                            </label>
-
-                                            <input
-                                                id="exam-time"
-                                                type="time"
-                                                value={examTime}
-                                                onChange={(event) =>
-                                                    setExamTime(
-                                                        event.target.value
-                                                    )
-                                                }
-                                            />
-
-                                        </div>
-
-
-                                        <div className="assignment-actions">
-
-                                            <button type="submit">
-                                                Add exam
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                className="cancel-button"
-                                                onClick={() => {
-                                                    setShowExamForm(false)
-                                                    setExamTitle("")
-                                                    setExamDate("")
-                                                    setExamTime("")
-                                                }}
-                                            >
-                                                Cancel
-                                            </button>
-
-                                        </div>
-
-                                    </form>
-
-                                )}
-
-
-                                {selectedSubject.exams.length === 0 ? (
-
-                                    <div className="workspace-empty">
-
-                                        <CalendarDays
-                                            size={23}
-                                            strokeWidth={1.5}
-                                        />
+                                    <div className="workspace-section-header">
 
                                         <div>
 
-                                            <h3>
-                                                No exams added yet.
-                                            </h3>
+                                            <span className="plan-number">
+                                                02
+                                            </span>
+
+                                            <h2>
+                                                Exams & deadlines
+                                            </h2>
 
                                             <p>
-                                                Add an exam or important deadline
-                                                for this subject.
+                                                Important dates for{" "}
+                                                {
+                                                    selectedSubject.name
+                                                }.
                                             </p>
 
                                         </div>
 
+                                        <button
+                                            type="button"
+                                            className="plan-add-button"
+                                            onClick={() =>
+                                                setShowExamForm(
+                                                    !showExamForm
+                                                )
+                                            }
+                                        >
+                                            {showExamForm
+                                                ? "Cancel"
+                                                : "Add exam"}
+                                        </button>
+
                                     </div>
 
-                                ) : (
+                                    {showExamForm && (
 
-                                    <div className="exam-list">
+                                        <form
+                                            className="exam-form"
+                                            onSubmit={addExam}
+                                        >
 
-                                        {selectedSubject.exams.map(
-                                            (exam) => (
+                                            <div className="assignment-input">
 
-                                                <div
-                                                    className="exam-row"
-                                                    key={exam.id}
+                                                <label htmlFor="exam-title">
+                                                    Exam
+                                                </label>
+
+                                                <input
+                                                    id="exam-title"
+                                                    type="text"
+                                                    placeholder="e.g. Database Systems final"
+                                                    value={
+                                                        examTitle
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setExamTitle(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
+                                                    autoFocus
+                                                />
+
+                                            </div>
+
+                                            <div className="assignment-input">
+
+                                                <label htmlFor="exam-date">
+                                                    Date
+                                                </label>
+
+                                                <input
+                                                    id="exam-date"
+                                                    type="date"
+                                                    value={
+                                                        examDate
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setExamDate(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="assignment-input">
+
+                                                <label htmlFor="exam-time">
+                                                    Time
+                                                </label>
+
+                                                <input
+                                                    id="exam-time"
+                                                    type="time"
+                                                    value={
+                                                        examTime
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setExamTime(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="assignment-actions">
+
+                                                <button type="submit">
+                                                    Add exam
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="cancel-button"
+                                                    onClick={() => {
+                                                        setShowExamForm(
+                                                            false
+                                                        )
+                                                        setExamTitle(
+                                                            ""
+                                                        )
+                                                        setExamDate(
+                                                            ""
+                                                        )
+                                                        setExamTime(
+                                                            ""
+                                                        )
+                                                    }}
                                                 >
+                                                    Cancel
+                                                </button>
 
-                                                    <div className="exam-date-box">
+                                            </div>
 
-                                                        <span>
-                                                            {new Date(
-                                                                `${exam.date}T00:00:00`
-                                                            ).toLocaleDateString(
-                                                                undefined,
-                                                                {
-                                                                    month: "short"
-                                                                }
-                                                            )}
-                                                        </span>
+                                        </form>
 
-                                                        <strong>
-                                                            {new Date(
-                                                                `${exam.date}T00:00:00`
-                                                            ).getDate()}
-                                                        </strong>
+                                    )}
 
-                                                    </div>
+                                    {selectedSubject.exams
+                                        .length === 0 ? (
 
+                                        <div className="workspace-empty">
 
-                                                    <div className="exam-details">
+                                            <CalendarDays
+                                                size={23}
+                                                strokeWidth={1.5}
+                                            />
 
-                                                        <strong>
-                                                            {exam.title}
-                                                        </strong>
+                                            <div>
 
-                                                        <span>
+                                                <h3>
+                                                    No exams added yet.
+                                                </h3>
 
-                                                            {new Date(
-                                                                `${exam.date}T00:00:00`
-                                                            ).toLocaleDateString(
-                                                                undefined,
-                                                                {
-                                                                    weekday: "long",
-                                                                    month: "long",
-                                                                    day: "numeric",
-                                                                    year: "numeric"
-                                                                }
-                                                            )}
+                                                <p>
+                                                    Add an exam or important
+                                                    deadline for this subject.
+                                                </p>
 
-                                                            {exam.time && (
-                                                                <>
-                                                                    {" · "}
-                                                                    {exam.time}
-                                                                </>
-                                                            )}
+                                            </div>
 
-                                                        </span>
+                                        </div>
 
-                                                    </div>
+                                    ) : (
 
+                                        <div className="exam-list">
 
-                                                    <button
-                                                        className="delete-assignment"
-                                                        type="button"
-                                                        onClick={() =>
-                                                            deleteExam(
-                                                                exam.id
-                                                            )
+                                            {selectedSubject.exams.map(
+                                                (exam) => (
+
+                                                    <div
+                                                        className="exam-row"
+                                                        key={
+                                                            exam.id
                                                         }
                                                     >
-                                                        <Trash2 size={16} />
-                                                    </button>
 
-                                                </div>
+                                                        <div className="exam-date-box">
 
-                                            )
-                                        )}
+                                                            <span>
+                                                                {new Date(
+                                                                    `${exam.date}T00:00:00`
+                                                                ).toLocaleDateString(
+                                                                    undefined,
+                                                                    {
+                                                                        month: "short"
+                                                                    }
+                                                                )}
+                                                            </span>
 
-                                    </div>
+                                                            <strong>
+                                                                {new Date(
+                                                                    `${exam.date}T00:00:00`
+                                                                ).getDate()}
+                                                            </strong>
 
-                                )}
+                                                        </div>
 
-                            </section>
+                                                        <div className="exam-details">
 
-                        )}
+                                                            <strong>
+                                                                {
+                                                                    exam.title
+                                                                }
+                                                            </strong>
 
+                                                            <span>
+                                                                {new Date(
+                                                                    `${exam.date}T00:00:00`
+                                                                ).toLocaleDateString(
+                                                                    undefined,
+                                                                    {
+                                                                        weekday: "long",
+                                                                        month: "long",
+                                                                        day: "numeric",
+                                                                        year: "numeric"
+                                                                    }
+                                                                )}
+
+                                                                {exam.time && (
+                                                                    <>
+                                                                        {" · "}
+                                                                        {
+                                                                            exam.time
+                                                                        }
+                                                                    </>
+                                                                )}
+                                                            </span>
+
+                                                        </div>
+
+                                                        <button
+                                                            className="delete-assignment"
+                                                            type="button"
+                                                            onClick={() =>
+                                                                deleteExam(
+                                                                    exam.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <Trash2
+                                                                size={
+                                                                    16
+                                                                }
+                                                            />
+                                                        </button>
+
+                                                    </div>
+
+                                                )
+                                            )}
+
+                                        </div>
+
+                                    )}
+
+                                </section>
+
+                            )}
 
                         {/* =========================
                             STUDY SESSIONS
                         ========================= */}
 
-                        {activeWorkspaceTab === "sessions" && (
+                        {activeWorkspaceTab ===
+                            "sessions" && (
 
-                            <section className="workspace-section">
+                                <section className="workspace-section">
 
-                                <div className="workspace-section-header">
-
-                                    <div>
-
-                                        <span className="plan-number">
-                                            03
-                                        </span>
-
-                                        <h2>
-                                            Study sessions
-                                        </h2>
-
-                                        <p>
-                                            Choose when you want to study{" "}
-                                            {selectedSubject.name}.
-                                        </p>
-
-                                    </div>
-
-
-                                    <button
-                                        className="plan-add-button"
-                                        type="button"
-                                        onClick={() =>
-                                            setShowSessionForm(true)
-                                        }
-                                    >
-                                        <Plus size={16} />
-                                        Add session
-                                    </button>
-
-                                </div>
-
-
-                                {showSessionForm && (
-
-                                    <form
-                                        className="session-form"
-                                        onSubmit={addStudySession}
-                                    >
-
-                                        <div className="assignment-input">
-
-                                            <label htmlFor="session-day">
-                                                Day
-                                            </label>
-
-                                            <select
-                                                id="session-day"
-                                                value={sessionDay}
-                                                onChange={(event) =>
-                                                    setSessionDay(
-                                                        event.target.value
-                                                    )
-                                                }
-                                            >
-
-                                                <option value="">
-                                                    Choose a day
-                                                </option>
-
-                                                <option value="monday">
-                                                    Monday
-                                                </option>
-
-                                                <option value="tuesday">
-                                                    Tuesday
-                                                </option>
-
-                                                <option value="wednesday">
-                                                    Wednesday
-                                                </option>
-
-                                                <option value="thursday">
-                                                    Thursday
-                                                </option>
-
-                                                <option value="friday">
-                                                    Friday
-                                                </option>
-
-                                                <option value="saturday">
-                                                    Saturday
-                                                </option>
-
-                                                <option value="sunday">
-                                                    Sunday
-                                                </option>
-
-                                            </select>
-
-                                        </div>
-
-
-                                        <div className="assignment-input">
-
-                                            <label htmlFor="session-time">
-                                                Start time
-                                            </label>
-
-                                            <input
-                                                id="session-time"
-                                                type="time"
-                                                value={sessionTime}
-                                                onChange={(event) =>
-                                                    setSessionTime(
-                                                        event.target.value
-                                                    )
-                                                }
-                                            />
-
-                                        </div>
-
-
-                                        <div className="assignment-input">
-
-                                            <label htmlFor="session-duration">
-                                                Duration
-                                            </label>
-
-                                            <select
-                                                id="session-duration"
-                                                value={sessionDuration}
-                                                onChange={(event) =>
-                                                    setSessionDuration(
-                                                        event.target.value
-                                                    )
-                                                }
-                                            >
-
-                                                <option value="30">
-                                                    30 minutes
-                                                </option>
-
-                                                <option value="45">
-                                                    45 minutes
-                                                </option>
-
-                                                <option value="60">
-                                                    1 hour
-                                                </option>
-
-                                                <option value="90">
-                                                    1 hour 30 minutes
-                                                </option>
-
-                                                <option value="120">
-                                                    2 hours
-                                                </option>
-
-                                                <option value="150">
-                                                    2 hours 30 minutes
-                                                </option>
-
-                                                <option value="180">
-                                                    3 hours
-                                                </option>
-
-                                            </select>
-
-                                        </div>
-
-
-                                        <div className="assignment-input session-focus">
-
-                                            <label htmlFor="session-focus">
-                                                Focus
-                                            </label>
-
-                                            <input
-                                                id="session-focus"
-                                                type="text"
-                                                placeholder="e.g. React components"
-                                                value={sessionFocus}
-                                                onChange={(event) =>
-                                                    setSessionFocus(
-                                                        event.target.value
-                                                    )
-                                                }
-                                            />
-
-                                        </div>
-
-
-                                        <div className="assignment-actions">
-
-                                            <button type="submit">
-                                                Add session
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                className="cancel-button"
-                                                onClick={() => {
-                                                    setShowSessionForm(false)
-                                                    setSessionDay("")
-                                                    setSessionTime("")
-                                                    setSessionDuration("60")
-                                                    setSessionFocus("")
-                                                }}
-                                            >
-                                                Cancel
-                                            </button>
-
-                                        </div>
-
-                                    </form>
-
-                                )}
-
-
-                                {selectedSubject.studySessions.length === 0 ? (
-
-                                    <div className="workspace-empty">
-
-                                        <Clock3
-                                            size={23}
-                                            strokeWidth={1.5}
-                                        />
+                                    <div className="workspace-section-header">
 
                                         <div>
 
-                                            <h3>
-                                                No study sessions yet.
-                                            </h3>
+                                            <span className="plan-number">
+                                                03
+                                            </span>
+
+                                            <h2>
+                                                Study sessions
+                                            </h2>
 
                                             <p>
-                                                Choose when you want to spend time
-                                                studying {selectedSubject.name}.
+                                                Choose when you want to
+                                                study{" "}
+                                                {
+                                                    selectedSubject.name
+                                                }.
                                             </p>
 
                                         </div>
 
+                                        <button
+                                            className="plan-add-button"
+                                            type="button"
+                                            onClick={() =>
+                                                setShowSessionForm(
+                                                    true
+                                                )
+                                            }
+                                        >
+                                            <Plus size={16} />
+                                            Add session
+                                        </button>
+
                                     </div>
 
-                                ) : (
+                                    {showSessionForm && (
 
-                                    <div className="session-list">
+                                        <form
+                                            className="session-form"
+                                            onSubmit={
+                                                addStudySession
+                                            }
+                                        >
 
-                                        {selectedSubject.studySessions.map(
-                                            (session) => (
+                                            <div className="assignment-input">
 
-                                                <div
-                                                    className={`session-row ${session.completed ? "completed" : ""}`}
-                                                    key={session.id}
+                                                <label htmlFor="session-day">
+                                                    Day
+                                                </label>
+
+                                                <select
+                                                    id="session-day"
+                                                    value={
+                                                        sessionDay
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setSessionDay(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
                                                 >
 
-                                                    <div className="session-time">
+                                                    <option value="">
+                                                        Choose a day
+                                                    </option>
 
-                                                        <span>
-                                                            {formatDay(
-                                                                session.day
-                                                            )}
-                                                        </span>
+                                                    <option value="monday">
+                                                        Monday
+                                                    </option>
 
-                                                        <strong>
-                                                            {session.time}
-                                                        </strong>
+                                                    <option value="tuesday">
+                                                        Tuesday
+                                                    </option>
 
-                                                    </div>
+                                                    <option value="wednesday">
+                                                        Wednesday
+                                                    </option>
 
+                                                    <option value="thursday">
+                                                        Thursday
+                                                    </option>
 
-                                                    <button
-                                                        className="assignment-check session-check"
-                                                        type="button"
-                                                        onClick={() => toggleStudySession(session.id)}
-                                                        aria-label={session.completed ? "Mark study session as incomplete" : "Mark study session as complete"}
-                                                    >
-                                                        {session.completed && <Check size={14} />}
-                                                    </button>
+                                                    <option value="friday">
+                                                        Friday
+                                                    </option>
 
-                                                    <div className="session-details">
+                                                    <option value="saturday">
+                                                        Saturday
+                                                    </option>
 
-                                                        <strong>
-                                                            {session.focus}
-                                                        </strong>
+                                                    <option value="sunday">
+                                                        Sunday
+                                                    </option>
 
-                                                        <span>
-                                                            {session.duration}
-                                                            {" minutes"}
-                                                            {" · "}
-                                                            {selectedSubject.name}
-                                                        </span>
+                                                </select>
 
-                                                    </div>
+                                            </div>
 
+                                            <div className="assignment-input">
 
-                                                    <button
-                                                        className="delete-assignment"
-                                                        type="button"
-                                                        onClick={() =>
-                                                            deleteStudySession(
-                                                                session.id
-                                                            )
+                                                <label htmlFor="session-time">
+                                                    Start time
+                                                </label>
+
+                                                <input
+                                                    id="session-time"
+                                                    type="time"
+                                                    value={
+                                                        sessionTime
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setSessionTime(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="assignment-input">
+
+                                                <label htmlFor="session-duration">
+                                                    Duration
+                                                </label>
+
+                                                <select
+                                                    id="session-duration"
+                                                    value={
+                                                        sessionDuration
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setSessionDuration(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
+                                                >
+
+                                                    <option value="30">
+                                                        30 minutes
+                                                    </option>
+
+                                                    <option value="45">
+                                                        45 minutes
+                                                    </option>
+
+                                                    <option value="60">
+                                                        1 hour
+                                                    </option>
+
+                                                    <option value="90">
+                                                        1 hour 30 minutes
+                                                    </option>
+
+                                                    <option value="120">
+                                                        2 hours
+                                                    </option>
+
+                                                    <option value="150">
+                                                        2 hours 30 minutes
+                                                    </option>
+
+                                                    <option value="180">
+                                                        3 hours
+                                                    </option>
+
+                                                </select>
+
+                                            </div>
+
+                                            <div className="assignment-input session-focus">
+
+                                                <label htmlFor="session-focus">
+                                                    Focus
+                                                </label>
+
+                                                <input
+                                                    id="session-focus"
+                                                    type="text"
+                                                    placeholder="e.g. React components"
+                                                    value={
+                                                        sessionFocus
+                                                    }
+                                                    onChange={(
+                                                        event
+                                                    ) =>
+                                                        setSessionFocus(
+                                                            event
+                                                                .target
+                                                                .value
+                                                        )
+                                                    }
+                                                />
+
+                                            </div>
+
+                                            <div className="assignment-actions">
+
+                                                <button type="submit">
+                                                    Add session
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="cancel-button"
+                                                    onClick={() => {
+                                                        setShowSessionForm(
+                                                            false
+                                                        )
+                                                        setSessionDay(
+                                                            ""
+                                                        )
+                                                        setSessionTime(
+                                                            ""
+                                                        )
+                                                        setSessionDuration(
+                                                            "60"
+                                                        )
+                                                        setSessionFocus(
+                                                            ""
+                                                        )
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </button>
+
+                                            </div>
+
+                                        </form>
+
+                                    )}
+
+                                    {selectedSubject
+                                        .studySessions
+                                        .length === 0 ? (
+
+                                        <div className="workspace-empty">
+
+                                            <Clock3
+                                                size={23}
+                                                strokeWidth={1.5}
+                                            />
+
+                                            <div>
+
+                                                <h3>
+                                                    No study sessions yet.
+                                                </h3>
+
+                                                <p>
+                                                    Choose when you want to
+                                                    spend time studying{" "}
+                                                    {
+                                                        selectedSubject.name
+                                                    }.
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                    ) : (
+
+                                        <div className="session-list">
+
+                                            {selectedSubject.studySessions.map(
+                                                (session) => (
+
+                                                    <div
+                                                        className={`session-row ${session.completed
+                                                            ? "completed"
+                                                            : ""
+                                                            }`}
+                                                        key={
+                                                            session.id
                                                         }
                                                     >
-                                                        <Trash2 size={16} />
-                                                    </button>
 
-                                                </div>
+                                                        <div className="session-time">
 
-                                            )
-                                        )}
+                                                            <span>
+                                                                {formatDay(
+                                                                    session.day
+                                                                )}
+                                                            </span>
 
-                                    </div>
+                                                            <strong>
+                                                                {
+                                                                    session.time
+                                                                }
+                                                            </strong>
 
-                                )}
+                                                        </div>
 
-                            </section>
+                                                        <button
+                                                            className="assignment-check session-check"
+                                                            type="button"
+                                                            onClick={() =>
+                                                                toggleStudySession(
+                                                                    session.id
+                                                                )
+                                                            }
+                                                            aria-label={
+                                                                session.completed
+                                                                    ? "Mark study session as incomplete"
+                                                                    : "Mark study session as complete"
+                                                            }
+                                                        >
+                                                            {session.completed && (
+                                                                <Check
+                                                                    size={
+                                                                        14
+                                                                    }
+                                                                />
+                                                            )}
+                                                        </button>
 
-                        )}
+                                                        <div className="session-details">
 
+                                                            <strong>
+                                                                {
+                                                                    session.focus
+                                                                }
+                                                            </strong>
+
+                                                            <span>
+                                                                {
+                                                                    session.duration
+                                                                }
+                                                                {" minutes"}
+                                                                {" · "}
+                                                                {
+                                                                    selectedSubject.name
+                                                                }
+                                                            </span>
+
+                                                        </div>
+
+                                                        <button
+                                                            className="delete-assignment"
+                                                            type="button"
+                                                            onClick={() =>
+                                                                deleteStudySession(
+                                                                    session.id
+                                                                )
+                                                            }
+                                                        >
+                                                            <Trash2
+                                                                size={
+                                                                    16
+                                                                }
+                                                            />
+                                                        </button>
+
+                                                    </div>
+
+                                                )
+                                            )}
+
+                                        </div>
+
+                                    )}
+
+                                </section>
+                            )}
                     </section>
 
                 )
+
             )}
 
-
-        </main >
+        </main>
     )
-
 }
-
 
 export default Dashboard

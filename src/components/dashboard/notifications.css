@@ -1,0 +1,328 @@
+/* ========================================
+   Notifications
+======================================== */
+
+.notifications-wrapper {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+}
+
+.notification-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 390px;
+    max-width: min(390px, calc(100vw - 32px));
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.notification-dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notification-dropdown-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.notification-dropdown-header p {
+    margin: 3px 0 0;
+    color: var(--text-secondary);
+    font-size: 10px;
+}
+
+.notification-clear {
+    padding: 5px 8px;
+    background: transparent;
+    border: 0;
+    color: var(--text-secondary);
+    font-size: 10px;
+    cursor: pointer;
+}
+
+.notification-clear:hover {
+    color: var(--primary-color);
+}
+
+/* ========================================
+   Notification List
+======================================== */
+
+.notification-items {
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    display: flex;
+    gap: 11px;
+    padding: 13px 15px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.notification-item:last-child {
+    border-bottom: 0;
+}
+
+.notification-item:hover {
+    background: var(--background-secondary);
+}
+
+/* Notification types */
+
+.notification-item.overdue,
+.notification-item.today,
+.notification-item.exam,
+.notification-item.session {
+    border-left: 3px solid var(--primary-color);
+}
+
+.notification-item.upcoming {
+    border-left: 3px solid var(--border-hover);
+}
+
+/* ========================================
+   Notification Icon
+======================================== */
+
+.notification-item-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    background: var(--primary-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--primary-color);
+}
+
+/* ========================================
+   Notification Body
+======================================== */
+
+.notification-item-body {
+    min-width: 0;
+    flex: 1;
+}
+
+.notification-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.notification-item-top>span {
+    color: var(--text-secondary);
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.notification-dismiss {
+    width: 23px;
+    height: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.notification-dismiss:hover {
+    background: var(--primary-light);
+    color: var(--text-primary);
+}
+
+.notification-item h3 {
+    margin: 5px 0 0;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.notification-item p {
+    margin: 3px 0 0;
+    color: var(--text-secondary);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+/* ========================================
+   Meta
+======================================== */
+
+.notification-item-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 9px;
+}
+
+.notification-item-meta span:first-child {
+    min-width: 0;
+    overflow: hidden;
+    color: var(--text-primary);
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notification-item-meta span:last-child {
+    flex-shrink: 0;
+}
+
+/* ========================================
+   Empty State
+======================================== */
+
+.notification-empty {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 25px 18px;
+    color: var(--primary-color);
+}
+
+.notification-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    background: var(--primary-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.notification-empty h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.notification-empty p {
+    margin: 3px 0 0;
+    color: var(--text-secondary);
+    font-size: 10px;
+}
+
+/* ========================================
+   Tablet / Small Screens
+======================================== */
+
+@media (max-width: 768px) {
+    .notification-dropdown {
+        position: fixed;
+        top: 68px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        max-width: none;
+        max-height: calc(100vh - 84px);
+        border-radius: 12px;
+        z-index: 9999;
+    }
+
+    .notification-items {
+        max-height: calc(100vh - 170px);
+    }
+}
+
+/* ========================================
+   Phones
+======================================== */
+
+@media (max-width: 480px) {
+    .notification-dropdown {
+        top: 62px;
+        left: 8px;
+        right: 8px;
+        width: auto;
+        border-radius: 11px;
+    }
+
+    .notification-dropdown-header {
+        padding: 13px;
+    }
+
+    .notification-item {
+        gap: 9px;
+        padding: 12px;
+    }
+
+    .notification-item-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .notification-item h3 {
+        font-size: 11px;
+    }
+
+    .notification-item p {
+        font-size: 9px;
+    }
+
+    .notification-item-meta {
+        font-size: 8px;
+    }
+}
+
+/* ========================================
+   Very Small Phones
+======================================== */
+
+@media (max-width: 360px) {
+    .notification-dropdown {
+        top: 58px;
+        left: 6px;
+        right: 6px;
+    }
+
+    .notification-dropdown-header {
+        padding: 11px;
+    }
+
+    .notification-item {
+        padding: 10px;
+    }
+
+    .notification-item-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 3px;
+    }
+}
