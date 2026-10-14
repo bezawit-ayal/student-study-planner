@@ -1,7 +1,7 @@
+
 import { useMemo, useState } from "react"
 import {
     AlertCircle,
-    Bell,
     BookOpen,
     CalendarDays,
     CheckCircle2,
@@ -13,11 +13,11 @@ import "./notifications.css"
 
 function Notifications({
     subjects = [],
-    isOpen,
-    onClose,
-    onOpenSubject
+    isOpen = false,
+    onClose
 }) {
     const [dismissed, setDismissed] = useState([])
+
     const notifications = useMemo(() => {
         const today = new Date()
         today.setHours(0, 0, 0, 0)
@@ -34,8 +34,9 @@ function Notifications({
                     Number(parts[2])
                 )
 
-                date.setHours(0, 0, 0, 0)
+                if (Number.isNaN(date.getTime())) return null
 
+                date.setHours(0, 0, 0, 0)
                 return date
             }
 
@@ -46,7 +47,6 @@ function Notifications({
             }
 
             date.setHours(0, 0, 0, 0)
-
             return date
         }
 
@@ -72,6 +72,7 @@ function Notifications({
             const exams = subject.exams || []
             const studySessions = subject.studySessions || []
 
+            // Assignment notifications
             assignments.forEach((assignment) => {
                 if (assignment.completed) return
 
@@ -88,12 +89,10 @@ function Notifications({
                         id: `overdue-${subject.id}-${assignment.id}`,
                         type: "overdue",
                         label: "Overdue",
-                        title: assignment.title,
+                        title: assignment.title || "Untitled assignment",
                         subject: subject.name,
                         subjectId: subject.id,
-                        message: `Overdue by ${Math.abs(days)} ${Math.abs(days) === 1
-                            ? "day"
-                            : "days"
+                        message: `Overdue by ${Math.abs(days)} ${Math.abs(days) === 1 ? "day" : "days"
                             }`,
                         date: formatDate(date),
                         icon: AlertCircle,
@@ -104,7 +103,7 @@ function Notifications({
                         id: `today-${subject.id}-${assignment.id}`,
                         type: "today",
                         label: "Due today",
-                        title: assignment.title,
+                        title: assignment.title || "Untitled assignment",
                         subject: subject.name,
                         subjectId: subject.id,
                         message: "This assignment is due today",
@@ -117,7 +116,7 @@ function Notifications({
                         id: `upcoming-${subject.id}-${assignment.id}`,
                         type: "upcoming",
                         label: "Upcoming",
-                        title: assignment.title,
+                        title: assignment.title || "Untitled assignment",
                         subject: subject.name,
                         subjectId: subject.id,
                         message:
@@ -131,6 +130,7 @@ function Notifications({
                 }
             })
 
+            // Exam notifications
             exams.forEach((exam) => {
                 const date = getDate(exam.date)
 
@@ -144,7 +144,7 @@ function Notifications({
                     id: `exam-${subject.id}-${exam.id}`,
                     type: "exam",
                     label: "Exam",
-                    title: exam.title,
+                    title: exam.title || "Upcoming exam",
                     subject: subject.name,
                     subjectId: subject.id,
                     message:
@@ -160,18 +160,16 @@ function Notifications({
                 })
             })
 
-            const todayName = today.toLocaleDateString(
-                undefined,
-                {
-                    weekday: "long"
-                }
-            )
+            // Today's study session notifications
+            const todayName = today.toLocaleDateString(undefined, {
+                weekday: "long"
+            })
 
             studySessions.forEach((session) => {
                 if (session.completed) return
 
                 if (
-                    String(session.day).toLowerCase() !==
+                    String(session.day || "").toLowerCase() !==
                     todayName.toLowerCase()
                 ) {
                     return
@@ -196,65 +194,56 @@ function Notifications({
         })
 
         return items
-            .filter(
-                (item) => !dismissed.includes(item.id)
-            )
-            .sort(
-                (a, b) => a.priority - b.priority
-            )
+            .filter((item) => !dismissed.includes(item.id))
+            .sort((a, b) => a.priority - b.priority)
     }, [subjects, dismissed])
 
     function dismissNotification(id) {
-        setDismissed((current) => [
-            ...current,
-            id
-        ])
+        setDismissed((current) => {
+            if (current.includes(id)) return current
+            return [...current, id]
+        })
     }
 
     function clearAll() {
         setDismissed((current) => [
-            ...current,
-            ...notifications.map(
-                (notification) => notification.id
-            )
+            ...new Set([
+                ...current,
+                ...notifications.map((notification) => notification.id)
+            ])
         ])
     }
 
-    function openNotification(notification) {
-        if (onOpenSubject) {
-            onOpenSubject(notification.subjectId)
-        }
-
-        if (onClose) {
-            onClose()
-        }
+    // Clicking a notification closes the dropdown only.
+    // It does not open a subject or change the Study Plan.
+    function openNotification() {
+        onClose?.()
     }
 
-    function toggleNotifications() {
-        setIsOpen((current) => !current)
+    if (!isOpen) {
+        return null
     }
 
     return (
         <div className="notifications-wrapper">
+            <div
+                className="notification-dropdown"
+                role="dialog"
+                aria-label="Notifications"
+            >
+                <div className="notification-dropdown-header">
+                    <div>
+                        <h2>Notifications</h2>
 
-            {isOpen && (
-                <div className="notification-dropdown">
+                        <p>
+                            {notifications.length > 0
+                                ? `${notifications.length} update${notifications.length === 1 ? "" : "s"
+                                }`
+                                : "You're all caught up"}
+                        </p>
+                    </div>
 
-                    <div className="notification-dropdown-header">
-
-                        <div>
-                            <h2>Notifications</h2>
-
-                            <p>
-                                {notifications.length > 0
-                                    ? `${notifications.length} update${notifications.length === 1
-                                        ? ""
-                                        : "s"
-                                    }`
-                                    : "You're all caught up"}
-                            </p>
-                        </div>
-
+                    <div className="notification-header-actions">
                         {notifications.length > 0 && (
                             <button
                                 type="button"
@@ -265,126 +254,94 @@ function Notifications({
                             </button>
                         )}
 
+                        <button
+                            type="button"
+                            className="notification-dismiss"
+                            aria-label="Close notifications"
+                            onClick={() => onClose?.()}
+                        >
+                            <X size={16} />
+                        </button>
                     </div>
-
-                    {notifications.length === 0 ? (
-                        <div className="notification-empty">
-
-                            <div className="notification-empty-icon">
-                                <CheckCircle2 size={22} />
-                            </div>
-
-                            <div>
-                                <h3>
-                                    All caught up
-                                </h3>
-
-                                <p>
-                                    No important study updates right now.
-                                </p>
-                            </div>
-
-                        </div>
-                    ) : (
-                        <div className="notification-items">
-
-                            {notifications.map(
-                                (notification) => {
-                                    const Icon =
-                                        notification.icon
-
-                                    return (
-                                        <div
-                                            key={notification.id}
-                                            className={`notification-item ${notification.type}`}
-                                            onClick={() =>
-                                                openNotification(
-                                                    notification
-                                                )
-                                            }
-                                        >
-
-                                            <div className="notification-item-icon">
-                                                <Icon size={16} />
-                                            </div>
-
-                                            <div className="notification-item-body">
-
-                                                <div className="notification-item-top">
-
-                                                    <span>
-                                                        {
-                                                            notification.label
-                                                        }
-                                                    </span>
-
-                                                    <button
-                                                        type="button"
-                                                        className="notification-dismiss"
-                                                        aria-label="Dismiss notification"
-                                                        onClick={(event) => {
-                                                            event.stopPropagation()
-
-                                                            dismissNotification(
-                                                                notification.id
-                                                            )
-                                                        }}
-                                                    >
-                                                        <X size={13} />
-                                                    </button>
-
-                                                </div>
-
-                                                <h3>
-                                                    {
-                                                        notification.title
-                                                    }
-                                                </h3>
-
-                                                <p>
-                                                    {
-                                                        notification.message
-                                                    }
-                                                </p>
-
-                                                <div className="notification-item-meta">
-
-                                                    <span>
-                                                        {
-                                                            notification.subject
-                                                        }
-                                                    </span>
-
-                                                    <span>
-                                                        {
-                                                            notification.date
-                                                        }
-
-                                                        {notification.time &&
-                                                            ` · ${notification.time}`}
-
-                                                        {notification.duration &&
-                                                            ` · ${notification.duration} min`}
-                                                    </span>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                    )
-                                }
-                            )}
-
-                        </div>
-                    )}
-
                 </div>
-            )}
 
+                {notifications.length === 0 ? (
+                    <div className="notification-empty">
+                        <div className="notification-empty-icon">
+                            <CheckCircle2 size={22} />
+                        </div>
+
+                        <div>
+                            <h3>All caught up</h3>
+                            <p>
+                                No important study updates right now.
+                            </p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="notification-items">
+                        {notifications.map((notification) => {
+                            const Icon = notification.icon
+
+                            return (
+                                <div
+                                    key={notification.id}
+                                    className={`notification-item ${notification.type}`}
+                                    onClick={openNotification}
+                                >
+                                    <div className="notification-item-icon">
+                                        <Icon size={18} />
+                                    </div>
+
+                                    <div className="notification-item-body">
+                                        <div className="notification-item-top">
+                                            <span>
+                                                {notification.label}
+                                            </span>
+
+                                            <button
+                                                type="button"
+                                                className="notification-dismiss"
+                                                aria-label="Dismiss notification"
+                                                onClick={(event) => {
+                                                    event.stopPropagation()
+                                                    dismissNotification(
+                                                        notification.id
+                                                    )
+                                                }}
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        </div>
+
+                                        <h3>{notification.title}</h3>
+
+                                        <p>{notification.message}</p>
+
+                                        <div className="notification-item-meta">
+                                            <span>
+                                                {notification.subject}
+                                            </span>
+
+                                            <span>
+                                                {notification.date}
+
+                                                {notification.time &&
+                                                    ` · ${notification.time}`}
+
+                                                {notification.duration &&
+                                                    ` · ${notification.duration} min`}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
 
 export default Notifications
-

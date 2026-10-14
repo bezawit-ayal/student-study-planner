@@ -14,7 +14,12 @@ import {
 
 import "./profile.css"
 
-function Profile({ subjects = [], onBack }) {
+function Profile({
+    subjects = [],
+    onBack,
+    user,
+    onUserUpdate
+}) {
     const fileInputRef = useRef(null)
 
     const [savedUser, setSavedUser] = useState(null)
@@ -26,17 +31,23 @@ function Profile({ subjects = [], onBack }) {
     const [success, setSuccess] = useState("")
 
     useEffect(() => {
-        const storedUser = JSON.parse(
-            localStorage.getItem("studyflow-user") || "null"
-        )
+        let storedUser = user;
 
-        if (storedUser) {
-            setSavedUser(storedUser)
-            setName(storedUser.name || "")
-            setEmail(storedUser.email || "")
-            setProfilePhoto(storedUser.profilePhoto || "")
+        if (!storedUser) {
+            try {
+                storedUser = JSON.parse(
+                    localStorage.getItem("studyflow-user") || "null"
+                );
+            } catch {
+                storedUser = null;
+            }
         }
-    }, [])
+
+        setSavedUser(storedUser);
+        setName(storedUser?.name || "");
+        setEmail(storedUser?.email || "");
+        setProfilePhoto(storedUser?.profilePhoto || "");
+    }, [user]);
 
     const totalSubjects = subjects.length
 

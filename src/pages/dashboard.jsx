@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 
 import { useEffect, useState } from "react"
+import { useMemo, useRef } from "react"
 
 import Notifications from "../components/dashboard/notifications"
 import Profile from "../components/dashboard/profile"
@@ -53,7 +54,15 @@ function Dashboard() {
     const [focusHistory, setFocusHistory] = useState([])
 
     const [showProfile, setShowProfile] = useState(false)
+    const notificationRef = useRef(null)
 
+    const [profileUser, setProfileUser] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem("studyflow-user") || "null")
+        } catch {
+            return null
+        }
+    })
     function formatTimer(seconds) {
         const minutes = Math.floor(seconds / 60)
         const remainingSeconds = seconds % 60
@@ -676,50 +685,36 @@ function Dashboard() {
 
                     {/* NOTIFICATION BELL */}
 
-                    <div className="dashboard-notification">
-
+                    <div className="notifications-wrapper"
+                        ref={notificationRef}
+                    >
                         <button
                             type="button"
-                            className={`notification-bell-button ${showNotifications
-                                ? "active"
-                                : ""
-                                }`}
+                            className="notification-menu-button"
+                            aria-label="Toggle notifications"
                             onClick={() => {
-                                setShowNotifications(
-                                    (current) => !current
-                                )
-                                setShowMenu(false)
+                                const willOpen = !showNotifications
+
+                                setShowNotifications(willOpen)
+
+                                if (willOpen) {
+                                    requestAnimationFrame(() => {
+                                        notificationRef.current?.scrollIntoView({
+                                            behavior: "smooth",
+                                            block: "start"
+                                        })
+                                    })
+                                }
                             }}
-                            aria-label="Open notifications"
-                            aria-expanded={
-                                showNotifications
-                            }
                         >
-                            <Bell
-                                size={20}
-                                strokeWidth={1.8}
-                            />
+                            <Bell size={20} />
                         </button>
 
                         <Notifications
                             subjects={subjects}
                             isOpen={showNotifications}
-                            onClose={() =>
-                                setShowNotifications(false)
-                            }
-                            onOpenSubject={(subjectId) => {
-                                setSelectedSubjectId(
-                                    subjectId
-                                )
-                                setActiveView("plan")
-                                setActiveWorkspaceTab(
-                                    "assignments"
-                                )
-                                setShowNotifications(false)
-                                setShowProfile(false)
-                            }}
+                            onClose={() => setShowNotifications(false)}
                         />
-
                     </div>
 
                     {/* THREE DOT MENU */}
@@ -862,7 +857,14 @@ function Dashboard() {
                         }}
                         aria-label="Open profile"
                     >
-                        B
+                        {profileUser?.profilePhoto ? (
+                            <img
+                                src={profileUser.profilePhoto}
+                                alt="Profile"
+                            />
+                        ) : (
+                            profileUser?.name?.trim()?.charAt(0)?.toUpperCase() || "U"
+                        )}
                     </button>
 
                 </div>
