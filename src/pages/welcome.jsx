@@ -1,132 +1,97 @@
-import { ArrowUpRight, BookOpen, CalendarDays, Check } from "lucide-react"
+import { ArrowDown, ArrowRight, BookOpen, CalendarDays, Check } from "lucide-react"
 import { Link } from "react-router-dom"
+import "./welcome.css"
 
-function Welcome() {
-    return (
-        <main className="welcome-page">
+export default function WelcomePage() {
+  return (
+    <main className="welcome-screen">
+      <header className="welcome-header">
+        <Link className="welcome-brand" to="/" aria-label="StudyFlow home">
+          <span className="welcome-brand-mark">
+            <BookOpen size={19} strokeWidth={1.8} aria-hidden="true" />
+          </span>
+          <span>StudyFlow</span>
+        </Link>
+        <a className="welcome-explore-link" href="#welcome-features">
+          A calmer way to study <ArrowDown size={15} aria-hidden="true" />
+        </a>
+      </header>
 
-            <nav className="welcome-nav">
+      <section className="welcome-hero" aria-labelledby="welcome-title">
+        <div className="welcome-copy">
+          <p className="welcome-eyebrow">
+            <span aria-hidden="true" />
+            Make space for what matters
+          </p>
+          <h1 id="welcome-title">
+            Make room
+            <em>for better learning.</em>
+          </h1>
+          <p className="welcome-description">
+            Plan your study time, stay ahead of deadlines, and build habits that
+            move you forward.
+          </p>
+          <div className="welcome-actions">
+            <Link className="welcome-primary-action" to="/dashboard">
+              Get Started <ArrowRight size={17} aria-hidden="true" />
+            </Link>
+            <a className="welcome-secondary-action" href="#welcome-features">
+              Explore StudyFlow
+            </a>
+          </div>
+          <div className="welcome-reassurance">
+            <span className="welcome-reassurance-mark"><Check size={13} aria-hidden="true" /></span>
+            <span>A little structure. A lot more breathing room.</span>
+          </div>
+        </div>
 
-                <Link to="/" className="brand">
-                    <span className="brand-mark">
-                        <BookOpen size={18} strokeWidth={1.8} />
-                    </span>
+        <div className="welcome-photo">
+          <img
+            src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1600&q=85"
+            alt="Students studying together in a bright university space"
+          />
+          <div className="welcome-photo-overlay" aria-hidden="true" />
+          <div className="welcome-photo-caption">
+            <div className="welcome-caption-icon">
+              <CalendarDays size={18} strokeWidth={1.8} aria-hidden="true" />
+            </div>
+            <div>
+              <span>YOUR SEMESTER, IN BALANCE</span>
+              <strong>Make today count.</strong>
+            </div>
+          </div>
+          <span className="welcome-photo-detail" aria-hidden="true">01 / A FRESH START</span>
+        </div>
+      </section>
 
-                    <span>StudyFlow</span>
-                </Link>
+      <section className="welcome-features" id="welcome-features" aria-label="How StudyFlow helps">
+        <article>
+          <span className="welcome-feature-index">01</span>
+          <div>
+            <h2>See what’s next</h2>
+            <p>Keep deadlines in view and give your week a little more shape.</p>
+          </div>
+        </article>
+        <article>
+          <span className="welcome-feature-index">02</span>
+          <div>
+            <h2>Bring it together</h2>
+            <p>Keep classes, assignments, and exams connected in one place.</p>
+          </div>
+        </article>
+        <article>
+          <span className="welcome-feature-index">03</span>
+          <div>
+            <h2>Find your focus</h2>
+            <p>Build consistent habits without asking for perfect days.</p>
+          </div>
+        </article>
+      </section>
 
-                <div className="nav-right">
-                    <span className="nav-question">
-                        Already studying with us?
-                    </span>
-
-                    <Link to="/sign-in" className="nav-link">
-                        Sign in
-                    </Link>
-                </div>
-
-            </nav>
-
-            <section className="hero">
-
-                <div className="hero-copy">
-
-                    <p className="hero-label">
-                        <span></span>
-                        A study planner for students
-                    </p>
-
-                    <h1>
-                        Make room
-                        <br />
-                        <em>for learning.</em>
-                    </h1>
-
-                    <p className="hero-description">
-                        Keep your classes, assignments, exams, and
-                        study time together. StudyFlow helps you
-                        decide what matters today and what can wait.
-                    </p>
-
-                    <div className="hero-actions">
-
-                        <Link to="/sign-up" className="start-link">
-                            Create your study plan
-                            <ArrowUpRight size={18} />
-                        </Link>
-
-                        <span className="no-card">
-                            Free to get started
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div className="hero-image">
-
-                    <img
-                        src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85"
-                        alt="Students studying together"
-                    />
-
-                    <div className="image-note">
-                        <div className="note-icon">
-                            <Check size={16} />
-                        </div>
-
-                        <div>
-                            <strong>One place for your semester</strong>
-                            <span>Classes · tasks · exams · focus</span>
-                        </div>
-                    </div>
-
-                </div>
-
-            </section>
-
-            <section className="simple-features">
-
-                <div className="feature-item">
-                    <CalendarDays size={20} strokeWidth={1.6} />
-
-                    <div>
-                        <strong>Know what's next</strong>
-                        <span>See upcoming deadlines before they become stressful.</span>
-                    </div>
-                </div>
-
-                <div className="feature-item">
-                    <BookOpen size={20} strokeWidth={1.6} />
-
-                    <div>
-                        <strong>Keep subjects together</strong>
-                        <span>Organize everything around the classes you take.</span>
-                    </div>
-                </div>
-
-                <div className="feature-item">
-
-                    <div className="number">
-                        01
-                    </div>
-
-                    <div>
-                        <strong>Start with today</strong>
-                        <span>Focus on the work in front of you.</span>
-                    </div>
-
-                </div>
-
-            </section>
-
-            <footer className="welcome-footer">
-                <span>StudyFlow</span>
-                <span>Built for students who want less chaos.</span>
-            </footer>
-
-        </main>
-    )
+      <footer className="welcome-screen-footer">
+        <span>StudyFlow</span>
+        <span>Steady progress, at your pace.</span>
+      </footer>
+    </main>
+  )
 }
-
-export default Welcome

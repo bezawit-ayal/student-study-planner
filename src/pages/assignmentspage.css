@@ -1,0 +1,365 @@
+.assignments-page {
+  width: 100%;
+}
+
+.assignment-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 15px;
+  padding: 9px 12px;
+  border: 1px solid var(--sf-border);
+  border-radius: 11px;
+  background: #fff;
+}
+
+.assignment-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.assignment-filter {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 7px;
+  color: var(--sf-muted);
+  background: transparent;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.assignment-filter:hover,
+.assignment-filter.active {
+  color: var(--sf-primary);
+  background: var(--sf-green-wash);
+}
+
+.assignment-filter span {
+  color: var(--sf-muted);
+  font-size: 10px;
+}
+
+.assignment-search-label input {
+  width: min(230px, 35vw);
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid var(--sf-border);
+  border-radius: 7px;
+  color: var(--sf-ink);
+  background: #fff;
+  font-size: 11px;
+}
+
+.assignment-search-label input:focus {
+  border-color: var(--sf-primary);
+  outline: 3px solid rgb(23 77 54 / 12%);
+}
+
+.assignment-list {
+  display: grid;
+  gap: 10px;
+}
+
+.assignment-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 17px 16px;
+  border: 1px solid var(--sf-border);
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.assignment-row:hover {
+  border-color: #c9d7c9;
+  box-shadow: 0 4px 14px rgb(16 59 43 / 4%);
+}
+
+.assignment-complete {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  margin-top: 1px;
+  border: 0;
+  border-radius: 50%;
+  color: #91988e;
+  background: transparent;
+  cursor: pointer;
+}
+
+.assignment-complete:hover:not(:disabled) {
+  color: var(--sf-primary);
+  background: var(--sf-green-wash);
+}
+
+.assignment-complete.is-complete {
+  color: #fff;
+  background: var(--sf-primary);
+}
+
+.assignment-complete:disabled,
+.assignment-actions button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.assignment-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.assignment-title-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.assignment-title-line h3 {
+  margin: 0;
+  color: var(--sf-ink);
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.assignment-row.completed .assignment-title-line h3 {
+  color: #9295a4;
+  text-decoration: line-through;
+}
+
+.priority-badge {
+  padding: 4px 7px;
+  border-radius: 5px;
+  font-size: 9px;
+  font-weight: 650;
+  text-transform: capitalize;
+}
+
+.priority-high {
+  color: #ad4651;
+  background: #fff0f0;
+}
+
+.priority-medium {
+  color: #795914;
+  background: #fbf1d7;
+}
+
+.priority-low {
+  color: #547365;
+  background: #edf7f1;
+}
+
+.assignment-description {
+  margin: 6px 0 0;
+  color: var(--sf-muted);
+  font-size: 11px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.assignment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.subject-tag,
+.due-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--sf-muted);
+  font-size: 10px;
+}
+
+.subject-tag > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.due-date.overdue {
+  color: #b44c55;
+}
+
+.due-date strong {
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.assignment-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+}
+
+.assignment-empty-state {
+  display: grid;
+  min-height: 220px;
+  justify-items: center;
+  align-content: center;
+  padding: 26px;
+  border: 1px dashed #dcddea;
+  border-radius: 13px;
+  background: #fff;
+  text-align: center;
+}
+
+.assignment-empty-state h3 {
+  margin: 0;
+  color: var(--sf-ink);
+  font-size: 15px;
+}
+
+.assignment-empty-state p {
+  max-width: 420px;
+  margin: 8px 0 16px;
+  color: var(--sf-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.assignment-empty-state > .primary-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.assignment-modal {
+  width: min(100%, 520px);
+  padding: 24px;
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgb(29 31 54 / 20%);
+}
+
+.assignment-modal .modal-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 21px;
+}
+
+.assignment-modal .modal-heading h2 {
+  margin: 0;
+  color: var(--sf-ink);
+  font-size: 20px;
+  letter-spacing: -0.035em;
+}
+
+.assignment-modal form {
+  display: grid;
+}
+
+.assignment-modal .field-label {
+  margin: 0 0 7px;
+  color: var(--sf-ink);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.assignment-modal .field-label span {
+  margin-left: 5px;
+  color: var(--sf-muted);
+  font-weight: 400;
+}
+
+.assignment-modal input,
+.assignment-modal select,
+.assignment-modal textarea {
+  width: 100%;
+  min-height: 39px;
+  margin-bottom: 16px;
+  padding: 9px 11px;
+  border: 1px solid var(--sf-border);
+  border-radius: 8px;
+  color: var(--sf-ink);
+  background: #fff;
+  font-size: 11px;
+}
+
+.assignment-modal textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.assignment-modal input:focus,
+.assignment-modal select:focus,
+.assignment-modal textarea:focus {
+  border-color: var(--sf-primary);
+  outline: 3px solid rgb(23 77 54 / 12%);
+}
+
+.assignment-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.assignment-form-row > div {
+  min-width: 0;
+}
+
+.assignment-modal .form-error {
+  margin: 0;
+  color: #a83e49;
+  font-size: 11px;
+}
+
+.assignment-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 7px;
+  padding-top: 17px;
+  border-top: 1px solid #f0f0f5;
+}
+
+@media (max-width: 620px) {
+  .assignment-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .assignment-search-label input {
+    width: 100%;
+  }
+
+  .assignment-row {
+    gap: 8px;
+    padding: 13px 10px;
+  }
+
+  .assignment-actions .icon-button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .assignment-meta {
+    gap: 8px;
+  }
+
+  .assignment-form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .assignment-modal {
+    padding: 20px;
+  }
+}

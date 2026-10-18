@@ -1,0 +1,62 @@
+:root {
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
+  color: #202923;
+  background: #f8f6ef;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --sf-forest: #103b2b;
+  --sf-primary: #174d36;
+  --sf-primary-dark: #103b2b;
+  --sf-gold: #d4a843;
+  --sf-soft-gold: #f0d58a;
+  --sf-cream: #f8f6ef;
+  --sf-ink: #202923;
+  --sf-muted: #747c73;
+  --sf-border: #e5e7de;
+  --sf-surface: #ffffff;
+  --sf-green: #397653;
+  --sf-green-wash: #eaf1e9;
+  --sf-gold-wash: #f8f0d9;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--sf-ink);
+  background: var(--sf-cream);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  color: #fff;
+  background: var(--sf-primary);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
